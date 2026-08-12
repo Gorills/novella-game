@@ -1,7 +1,44 @@
 export const CLUES = {
-  symbol_ground: { id: "symbol_ground", title: "Знак на асфальте", short: "Геометрия совпадает с фрагментом татуировки Катерины.", reliability: "высокая", icon: "seal" },
-  pendant: { id: "pendant", title: "Серебряный кулон", short: "Чужая вещь с едва заметным следом чужой крови.", reliability: "средняя", icon: "pendant" },
-  drag_marks: { id: "drag_marks", title: "След волочения", short: "След обрывается у глухой стены — обычного выхода нет.", reliability: "высокая", icon: "trace" }
+  symbol_ground: {
+    id: "symbol_ground", title: "Знак на асфальте",
+    short: "Геометрия совпадает с фрагментом татуировки Катерины.",
+    detail: "Линии выжжены не краской: поверхность будто на секунду стала мягкой.",
+    reliability: "высокая", icon: "seal"
+  },
+  pendant: {
+    id: "pendant", title: "Серебряный кулон",
+    short: "Чужая вещь с едва заметным следом крови.",
+    detail: "На застёжке свежая царапина, на внутренней стороне — инициалы, которых нет в ориентировке.",
+    reliability: "средняя", icon: "pendant"
+  },
+  drag_marks: {
+    id: "drag_marks", title: "След волочения",
+    short: "След обрывается у глухой стены — обычного выхода нет.",
+    detail: "Вода смывает почти всё, но направление однозначно: человека тащили к стене, не от неё.",
+    reliability: "высокая", icon: "trace"
+  }
+};
+
+export const EVIDENCE_LINKS = {
+  symbol_drag: {
+    id: "symbol_drag",
+    a: "symbol_ground", b: "drag_marks",
+    label: "Связать знак и оборванный след",
+    result: "След исчезает именно в зоне знака: это не метка после события, а часть механизма исчезновения."
+  },
+  symbol_pendant: {
+    id: "symbol_pendant",
+    a: "symbol_ground", b: "pendant",
+    label: "Связать знак и кулон",
+    result: "Кулон лежал внутри рисунка. Пропавшая была у знака в момент события или сразу перед ним."
+  },
+  echo_symbol: {
+    id: "echo_symbol",
+    a: "symbol_ground", b: null,
+    requiresFlag: "trace_seal_used",
+    label: "Сопоставить знак с Эхом",
+    result: "Эхо реагирует не на кровь и не на вещь — оно цепляется за геометрию знака."
+  }
 };
 
 export const SCENES = {
@@ -79,7 +116,7 @@ export const SCENES = {
       "Доказательств мало, но один вопрос уже нельзя отложить: почему чужое преступление использует язык, написанный на её коже?"
     ],
     actions: [
-      { id: "board.open", label: "Открыть доску расследования", kind: "primary" },
+      { id: "board.open", label: "Разложить улики на доске", kind: "primary" },
       { id: "scene.finish", label: "Завершить пролог", kind: "quiet", requiresFlag: "hypothesis_confirmed" }
     ]
   },

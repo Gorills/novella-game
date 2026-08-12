@@ -2,18 +2,18 @@
 
 ## Катерина
 
-`katerina.webp` materializes from the packed source already stored in this repository. It is derived directly from the user-provided locked visual reference.
+`katerina.webp` — прямой production asset из пользовательского locked visual reference.
 
 Канон: лицо, пропорции, татуировки и **обязательное тёмно-красное каре** нельзя переосмысливать без прямого решения пользователя.
 
 ## Егор
 
-`egor.webp` is the accepted first-slice portrait. Before mass production of poses/CGs, create and lock a proper Egor reference pack.
+`egor.webp` — временно зафиксированный first-slice portrait из текущего визуального концепта. Он пригоден только для первой playable-сцены и не является разрешением на массовое производство поз/CG.
 
-## Packed source
+Перед расширением романтической линии нужно создать и отдельно visually approve полноценный locked Egor reference sheet.
 
-`packed/katerina/` and `packed/egor/` are transport-safe source chunks used because the connected GitHub write API cannot accept a local binary path directly.
+## Packed fallback
 
-`tools/materialize_packed_assets.py` reconstructs normal image files. `.github/workflows/materialize-character-assets.yml` runs this automatically when the packed source/materializer changes.
+`packed/katerina/` остаётся transport-safe fallback для канонического референса Катерины. Нормальные бинарные `katerina.webp` / `egor.webp` имеют приоритет, если уже закоммичены.
 
-Do not create new packed formats. If normal binary upload is available in a future environment, replace the transport layer while preserving the canonical image content.
+`tools/materialize_packed_assets.py` умеет восстановить asset из любых отсортированных non-hidden chunks и не требует packed-директорию, если нормальный бинарный asset уже существует.
