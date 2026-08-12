@@ -26,13 +26,14 @@ def _decode(parts_dir: Path) -> bytes:
     if not parts:
         raise RuntimeError(f"No packed parts found in {parts_dir}")
 
-    # Legacy packed assets are fallback transport only. Their format may differ
-    # between old revisions; this code must never overwrite a valid committed
-    # locked asset just because packed chunks are also present.
+    # Legacy Katerina transport is one continuous base64 stream split across
+    # text files at arbitrary byte boundaries. Concatenate first and restore
+    # only the final RFC 4648 padding that was lost by the old splitter.
     raw = b"".join(part.read_bytes() for part in parts)
     compact = b"".join(raw.split())
+    padded = compact + (b"=" * ((-len(compact)) % 4))
     try:
-        decoded = base64.b64decode(compact, validate=True)
+        decoded = base64.b64decode(padded, validate=True)
     except Exception as exc:
         raise RuntimeError(f"Invalid packed WebP stream in {parts_dir}: {exc}") from exc
     if not _is_webp(decoded):
