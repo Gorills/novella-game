@@ -20,9 +20,44 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Prepare locked character assets
+        run: python ../tools/materialize_packed_assets.py
       - name: Unit tests
         run: npm test
       - name: Static validation
         run: npm run validate
       - name: Agent playthrough
         run: npm run agent-smoke
+
+  visual-qa:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Prepare locked character assets
+        run: python ../tools/materialize_packed_assets.py
+      - name: Resolve Chromium
+        shell: bash
+        run: |
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)"
+          if [ -z "$CHROME" ]; then
+            echo "No Chromium-compatible browser found on runner" >&2
+            exit 1
+          fi
+          echo "CHROMIUM_PATH=$CHROME" >> "$GITHUB_ENV"
+      - name: Render acceptance screenshots
+        env:
+          VISUAL_QA_TIMEOUT_MS: "120000"
+        run: npm run visual-qa
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-qa-screenshots
+          path: web/.qa/screenshots
+          if-no-files-found: warn
+          retention-days: 7
