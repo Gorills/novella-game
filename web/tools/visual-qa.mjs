@@ -119,7 +119,7 @@ async function sleep(ms) { await new Promise((r) => setTimeout(r, ms)); }
 async function waitForReady(cdp, sessionId) {
   const started = Date.now();
   while (Date.now() - started < STEP_TIMEOUT_MS) {
-    const result = await cdp.send("Runtime.evaluate", { expression: "Boolean(window.__NOVELLA__) && document.readyState !== 'loading'", returnByValue: true }, sessionId);
+    const result = await cdp.send("Runtime.evaluate", { expression: "Boolean(window.__NOVELLA__) && document.readyState !== 'loading' && document.documentElement.dataset.productionArtReady === 'true'", returnByValue: true }, sessionId);
     if (result.result.value) return;
     await sleep(120);
   }
@@ -136,9 +136,20 @@ async function setViewport(cdp, sessionId, width, height) {
   await cdp.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false }, sessionId);
 }
 
+async function waitForImages(cdp, sessionId) {
+  const started = Date.now();
+  while (Date.now() - started < STEP_TIMEOUT_MS) {
+    const ready = await evaluate(cdp, sessionId, "Array.from(document.images).every((img) => img.complete && img.naturalWidth > 0)");
+    if (ready) return;
+    await sleep(80);
+  }
+  throw new Error("Scene images did not finish loading");
+}
+
 async function shot(cdp, sessionId, name, width, height) {
   await setViewport(cdp, sessionId, width, height);
-  await sleep(180);
+  await waitForImages(cdp, sessionId);
+  await sleep(120);
   const data = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true, captureBeyondViewport: false }, sessionId);
   const path = join(OUT, `${name}-${width}x${height}.png`);
   await writeFile(path, Buffer.from(data.data, "base64"));
@@ -190,6 +201,7 @@ async function runQa() {
     await act(cdp, sessionId, "scene.meet_egor");
     await shot(cdp, sessionId, "05-egor", 1920, 1080);
     await act(cdp, sessionId, "egor.direct");
+    await shot(cdp, sessionId, "05b-egor-direct-response", 1920, 1080);
     await act(cdp, sessionId, "scene.go_home");
     await act(cdp, sessionId, "board.open");
     await act(cdp, sessionId, "board.link.symbol_drag");
@@ -207,7 +219,7 @@ async function runQa() {
     await act(cdp, sessionId, "scene.meet_egor");
     await shot(cdp, sessionId, "08-egor-small", 1366, 768);
 
-    console.log("visual-qa: completed 8 acceptance screenshots using one Chromium process");
+    console.log("visual-qa: completed 9 acceptance screenshots using one Chromium process");
   } finally {
     try { if (cdp) await cdp.send("Browser.close"); } catch {}
     try { cdp?.close(); } catch {}

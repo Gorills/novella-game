@@ -1,0 +1,183 @@
+/* Production environment art pass. Functional UI remains in the baseline styles. */
+.production-art {
+  background-image: var(--production-art) !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  isolation: isolate;
+}
+.production-art > * { position: relative; z-index: 2; }
+.production-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.production-apartment {
+  background-position: center 48% !important;
+  filter: saturate(.9) contrast(1.03) brightness(.86);
+}
+.production-apartment::after {
+  background:
+    linear-gradient(90deg, rgba(4,5,8,.38), rgba(4,5,8,.04) 48%, rgba(4,5,8,.1)),
+    radial-gradient(circle at 24% 72%, rgba(217,145,76,.13), transparent 27%),
+    linear-gradient(180deg, rgba(0,0,0,.03), transparent 58%, rgba(0,0,0,.3));
+}
+.production-apartment .apartment-set { display:none; }
+.production-crime {
+  background-position:center 50% !important;
+  filter:saturate(.9) contrast(1.04) brightness(.9);
+}
+.production-crime::after {
+  background:
+    linear-gradient(90deg, rgba(2,4,7,.13), transparent 45%, rgba(2,3,6,.12)),
+    radial-gradient(circle at 22% 30%, rgba(67,96,143,.12), transparent 31%),
+    linear-gradient(180deg, rgba(0,0,0,.01), transparent 58%, rgba(0,0,0,.28));
+  box-shadow:inset 0 0 130px rgba(0,0,0,.34);
+}
+.production-crime .street-set { display:none; }
+.production-echo {
+  background-position:center 45% !important;
+  filter:saturate(.74) contrast(1.12) brightness(.72);
+}
+.production-echo::after {
+  background:
+    linear-gradient(90deg, rgba(7,2,6,.58), rgba(7,2,6,.04) 52%, rgba(7,2,6,.24)),
+    repeating-radial-gradient(circle at 68% 48%, transparent 0 50px, rgba(210,48,90,.025) 52px 53px);
+  box-shadow:inset 0 0 170px rgba(0,0,0,.55);
+  animation:productionEchoBreath 4.8s ease-in-out infinite;
+}
+.production-echo .echo-set { display:none; }
+.production-echo::before {
+  content:"";
+  position:absolute;
+  left:11%; top:17%;
+  width:190px; height:190px;
+  border:1px solid rgba(200,50,88,.22);
+  border-radius:50%;
+  z-index:2;
+  opacity:.55;
+  box-shadow:0 0 70px rgba(178,37,76,.18), inset 0 0 35px rgba(178,37,76,.08);
+}
+@keyframes productionEchoBreath { 0%,100%{opacity:.62} 50%{opacity:.9} }
+
+/* The menu keeps the baseline rainy city for this pass, but removes the
+   oversized placeholder glyphs so the canonical heroine becomes the focus. */
+.menu-screen .moon { opacity:.11 !important; transform:scale(.68); transform-origin:center; }
+.menu-screen .seal-ghost { opacity:.08 !important; transform:scale(.7); transform-origin:center; }
+
+/*
+ * Canonical heroine rendering.
+ *
+ * Hosted QA twice proved that the legacy <img class="katya"> path could have
+ * natural dimensions yet contribute no visible pixels. Do not keep retrying
+ * that failed presentation path. The locked canonical WebP is now rendered as
+ * an explicit scene cutout layer instead. This preserves the exact source
+ * image while giving the visual layer deterministic geometry and stacking.
+ */
+.menu-hero img.katya,
+.character-stage img.katya { opacity:0 !important; visibility:hidden !important; }
+
+.menu-hero::after,
+.character-stage::before {
+  content:"";
+  position:absolute;
+  pointer-events:none;
+  background-image:url("./assets/katerina.webp");
+  background-repeat:no-repeat;
+  background-size:contain;
+  background-position:center bottom;
+  z-index:4;
+  filter:drop-shadow(-28px 32px 54px rgba(0,0,0,.7));
+}
+.menu-hero { z-index:5 !important; }
+.menu-hero::after {
+  right:1.5%;
+  bottom:-5%;
+  width:min(48vw,720px);
+  height:108%;
+}
+.character-stage { z-index:12 !important; pointer-events:none; }
+.character-stage::before {
+  right:1.5%;
+  bottom:-8%;
+  width:min(43vw,650px);
+  height:99%;
+}
+.scene-apartment .character-stage::before {
+  right:1%;
+  bottom:-7%;
+  width:min(42vw,640px);
+  height:101%;
+}
+.scene-crime .character-stage::before {
+  right:-1%;
+  bottom:-9%;
+  width:min(39vw,590px);
+  height:97%;
+  filter:brightness(.94) drop-shadow(-24px 30px 50px rgba(0,0,0,.72));
+}
+.scene-echo .character-stage::before {
+  right:1%;
+  bottom:-8%;
+  width:min(38vw,560px);
+  height:96%;
+  opacity:.72;
+  filter:grayscale(.52) contrast(1.08) drop-shadow(-13px 0 0 rgba(181,43,79,.08)) drop-shadow(10px 0 0 rgba(111,133,189,.07));
+}
+.scene-board .character-stage::before {
+  right:1.5%;
+  bottom:-8%;
+  width:min(39vw,590px);
+  height:96%;
+  opacity:.9;
+}
+.mode-dialogue .dialogue-stage::before {
+  left:1%;
+  right:auto;
+  bottom:-8%;
+  width:min(39vw,590px);
+  height:94%;
+  transform:scaleX(-1);
+  filter:drop-shadow(24px 30px 52px rgba(0,0,0,.7));
+}
+
+/* Fade Egor's actual image pixels into the alley. The source portrait has a
+   background, so the fade must start well before its rectangular edges. */
+.mode-dialogue .egor-frame {
+  overflow:visible !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  border:0 !important;
+  -webkit-mask-image:none !important;
+  mask-image:none !important;
+}
+.mode-dialogue .egor-art {
+  -webkit-mask-image:radial-gradient(ellipse 58% 69% at 54% 42%, #000 0 43%, rgba(0,0,0,.94) 54%, rgba(0,0,0,.58) 66%, transparent 82%) !important;
+  mask-image:radial-gradient(ellipse 58% 69% at 54% 42%, #000 0 43%, rgba(0,0,0,.94) 54%, rgba(0,0,0,.58) 66%, transparent 82%) !important;
+  filter:contrast(1.03) saturate(.8) brightness(.88) drop-shadow(-16px 26px 34px rgba(0,0,0,.58)) !important;
+}
+
+.mode-investigation .hotspot {
+  background:rgba(8,9,13,.52);
+  border-color:rgba(225,220,223,.18);
+  backdrop-filter:blur(9px);
+  box-shadow:0 8px 28px rgba(0,0,0,.24);
+}
+.mode-investigation .story-panel { background:linear-gradient(135deg,rgba(9,9,13,.82),rgba(9,9,13,.55)); }
+
+@media (max-width:1450px) {
+  .production-apartment { background-position:42% 48% !important; }
+  .production-crime { background-position:47% 50% !important; }
+  .production-echo { background-position:58% 45% !important; }
+  .menu-hero::after { right:-1%; bottom:-5%; width:min(51vw,640px); height:107%; }
+  .character-stage::before { width:min(42vw,540px); }
+  .mode-dialogue .dialogue-stage::before { left:-2%; width:min(38vw,500px); height:90%; }
+  .mode-dialogue .egor-art { transform:scale(.94); transform-origin:bottom right; }
+}
+@media (max-width:1050px) {
+  .menu-hero::after { right:-6%; width:54vw; opacity:.88; }
+  .character-stage::before { right:-5%; width:46vw; opacity:.82; }
+  .mode-dialogue .dialogue-stage::before { left:-6%; width:41vw; opacity:.86; }
+}
+@media (prefers-reduced-motion: reduce) { .production-echo::after { animation:none; } }
