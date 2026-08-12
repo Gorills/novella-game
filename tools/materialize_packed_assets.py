@@ -33,8 +33,11 @@ def _decode(parts_dir: Path) -> bytes:
 
     # The legacy Katerina transport is one continuous base64 stream split into
     # several text files. Individual chunks are not independently padded, so
-    # they must be concatenated before decoding.
+    # they must be concatenated before decoding. The historical transport also
+    # omitted terminal base64 padding; restore only the mathematically required
+    # number of '=' bytes before strict decoding.
     compact = b"".join(b"".join(part.read_bytes().split()) for part in parts)
+    compact += b"=" * ((-len(compact)) % 4)
     try:
         decoded = base64.b64decode(compact, validate=True)
     except Exception as exc:
