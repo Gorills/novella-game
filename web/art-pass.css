@@ -15,25 +15,25 @@
 }
 .production-apartment {
   background-position: center 48% !important;
-  filter: saturate(.88) contrast(1.04) brightness(.82);
+  filter: saturate(.9) contrast(1.03) brightness(.86);
 }
 .production-apartment::after {
   background:
-    linear-gradient(90deg, rgba(4,5,8,.42), rgba(4,5,8,.06) 48%, rgba(4,5,8,.12)),
-    radial-gradient(circle at 24% 72%, rgba(217,145,76,.12), transparent 27%),
-    linear-gradient(180deg, rgba(0,0,0,.05), transparent 58%, rgba(0,0,0,.34));
+    linear-gradient(90deg, rgba(4,5,8,.38), rgba(4,5,8,.04) 48%, rgba(4,5,8,.1)),
+    radial-gradient(circle at 24% 72%, rgba(217,145,76,.13), transparent 27%),
+    linear-gradient(180deg, rgba(0,0,0,.03), transparent 58%, rgba(0,0,0,.3));
 }
 .production-apartment .apartment-set { display:none; }
 .production-crime {
   background-position:center 50% !important;
-  filter:saturate(.86) contrast(1.07) brightness(.78);
+  filter:saturate(.9) contrast(1.04) brightness(.9);
 }
 .production-crime::after {
   background:
-    linear-gradient(90deg, rgba(2,4,7,.19), transparent 45%, rgba(2,3,6,.16)),
-    radial-gradient(circle at 22% 30%, rgba(67,96,143,.11), transparent 31%),
-    linear-gradient(180deg, rgba(0,0,0,.02), transparent 55%, rgba(0,0,0,.38));
-  box-shadow:inset 0 0 150px rgba(0,0,0,.46);
+    linear-gradient(90deg, rgba(2,4,7,.13), transparent 45%, rgba(2,3,6,.12)),
+    radial-gradient(circle at 22% 30%, rgba(67,96,143,.12), transparent 31%),
+    linear-gradient(180deg, rgba(0,0,0,.01), transparent 58%, rgba(0,0,0,.28));
+  box-shadow:inset 0 0 130px rgba(0,0,0,.34);
 }
 .production-crime .street-set { display:none; }
 .production-echo {
@@ -61,36 +61,66 @@
 }
 @keyframes productionEchoBreath { 0%,100%{opacity:.62} 50%{opacity:.9} }
 
+/* The menu keeps the baseline rainy city for this pass, but removes the
+   oversized placeholder glyphs so the canonical heroine becomes the focus. */
+.menu-screen .moon { opacity:.13 !important; transform:scale(.72); transform-origin:center; }
+.menu-screen .seal-ghost { opacity:.12 !important; transform:scale(.74); transform-origin:center; }
+.menu-hero { z-index:5 !important; }
 .menu-katya {
-  right:3% !important;
-  bottom:-7% !important;
-  height:108% !important;
-  max-width:61vw !important;
-  filter:drop-shadow(-28px 34px 58px rgba(0,0,0,.76)) !important;
+  right:2% !important;
+  bottom:-8% !important;
+  height:112% !important;
+  width:auto !important;
+  max-width:58vw !important;
+  opacity:1 !important;
+  filter:drop-shadow(-30px 34px 58px rgba(0,0,0,.72)) !important;
 }
-.scene-apartment .pose-apartment { right:2.5% !important; height:95% !important; }
-.scene-crime .pose-crime { right:1% !important; height:93% !important; opacity:.96 !important; }
-.scene-board .pose-board { right:3% !important; height:92% !important; }
 
-.egor-frame {
-  overflow:visible !important;
-  -webkit-mask-image:radial-gradient(ellipse 78% 72% at 52% 43%, #000 0 55%, rgba(0,0,0,.94) 68%, transparent 100%) !important;
-  mask-image:radial-gradient(ellipse 78% 72% at 52% 43%, #000 0 55%, rgba(0,0,0,.94) 68%, transparent 100%) !important;
+.character-stage { z-index:12 !important; pointer-events:none; }
+.character-stage .katya { opacity:1 !important; visibility:visible !important; }
+.scene-apartment .pose-apartment { right:1.5% !important; bottom:-10% !important; height:101% !important; width:auto !important; }
+.scene-crime .pose-crime { right:-1% !important; bottom:-11% !important; height:98% !important; width:auto !important; opacity:.98 !important; }
+.scene-board .pose-board { right:2% !important; bottom:-10% !important; height:96% !important; width:auto !important; }
+.mode-dialogue .pose-dialogue {
+  left:4% !important;
+  right:auto !important;
+  bottom:-10% !important;
+  height:91% !important;
+  width:auto !important;
+  max-width:41vw !important;
+  filter:drop-shadow(26px 30px 50px rgba(0,0,0,.68)) !important;
 }
-.egor-art { filter:contrast(1.04) saturate(.86) brightness(.88); }
+
+/* Fade the portrait pixels themselves into the scene; masking only the frame
+   left a visible rectangular card in the first hosted review. */
+.mode-dialogue .egor-frame {
+  overflow:visible !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  border:0 !important;
+  -webkit-mask-image:none !important;
+  mask-image:none !important;
+}
+.mode-dialogue .egor-art {
+  -webkit-mask-image:radial-gradient(ellipse 72% 76% at 54% 42%, #000 0 50%, rgba(0,0,0,.96) 62%, rgba(0,0,0,.72) 73%, transparent 100%) !important;
+  mask-image:radial-gradient(ellipse 72% 76% at 54% 42%, #000 0 50%, rgba(0,0,0,.96) 62%, rgba(0,0,0,.72) 73%, transparent 100%) !important;
+  filter:contrast(1.04) saturate(.82) brightness(.9) drop-shadow(-20px 28px 38px rgba(0,0,0,.62)) !important;
+}
 
 .mode-investigation .hotspot {
-  background:rgba(8,9,13,.58);
-  border-color:rgba(225,220,223,.16);
+  background:rgba(8,9,13,.52);
+  border-color:rgba(225,220,223,.18);
   backdrop-filter:blur(9px);
-  box-shadow:0 8px 28px rgba(0,0,0,.28);
+  box-shadow:0 8px 28px rgba(0,0,0,.24);
 }
-.mode-investigation .story-panel { background:linear-gradient(135deg,rgba(9,9,13,.88),rgba(9,9,13,.62)); }
+.mode-investigation .story-panel { background:linear-gradient(135deg,rgba(9,9,13,.82),rgba(9,9,13,.55)); }
 
 @media (max-width:1450px) {
   .production-apartment { background-position:42% 48% !important; }
   .production-crime { background-position:47% 50% !important; }
   .production-echo { background-position:58% 45% !important; }
-  .menu-katya { right:-2% !important; height:104% !important; max-width:65vw !important; }
+  .menu-katya { right:-1% !important; bottom:-9% !important; height:108% !important; max-width:62vw !important; }
+  .mode-dialogue .pose-dialogue { left:1% !important; height:87% !important; max-width:39vw !important; }
+  .mode-dialogue .egor-art { transform:scale(.94); transform-origin:bottom right; }
 }
 @media (prefers-reduced-motion: reduce) { .production-echo::after { animation:none; } }
