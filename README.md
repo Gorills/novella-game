@@ -1,30 +1,65 @@
-# Novella Game
+# Echo of Seven Seals / «Эхо семи печатей»
 
-Романтическая мистическая новелла с детективным расследованием, вампирами, магией и системными игровыми механиками.
+Романтическая мистическая narrative game с детективным расследованием, вампирами, магией и способностями.
 
-Главная героиня — 21-летняя Катерина. Её татуировки постепенно раскрываются как система магических печатей, связанная с её прошлым, скрытым устройством мира и центральным расследованием. Основной романтический персонаж — Егор, вампир неизвестного возраста, отношения с которым строятся на доверии, границах и конфликте скрываемой правды.
+Главная героиня — 21-летняя Катерина. Её татуировки постепенно раскрываются как система магических печатей, связанная с прошлым, скрытым устройством мира и серией исчезновений. Основной романтический персонаж — Егор, вампир неизвестного возраста, отношения с которым строятся на доверии, границах и скрываемой правде.
 
-## Foundation
+## Любому новому чату/агенту
 
-Канонический индекс: [`docs/CANON.md`](docs/CANON.md)
+Сначала прочитать [`AGENTS.md`](AGENTS.md). Там находится обязательный Definition of Done: реальный запуск, gameplay smoke, screenshots, visual review, self-review PR и merge в `main`.
 
-Основные документы:
+Канон: [`docs/CANON.md`](docs/CANON.md).
 
-- [`docs/00-vision/CONCEPT.md`](docs/00-vision/CONCEPT.md) — high concept, темы, tone и столпы игры;
-- [`docs/00-vision/VISUAL_BIBLE.md`](docs/00-vision/VISUAL_BIBLE.md) — визуальное направление и правила консистентности персонажей;
+## Катерина — locked reference
+
+`web/assets/katerina.webp` — единственный канонический visual reference Катерины.
+
+**Каре обязательно.** Нельзя заменять его длинными волосами или генерировать новую Катерину без прямого решения пользователя.
+
+## Playable baseline
+
+Текущий baseline: **«Пролог: След»**.
+
+Он включает:
+
+- стартовое меню;
+- телефон и диалог с Софьей;
+- исследование места происшествия;
+- три улики;
+- интерактивную активацию Печати Следа;
+- Эхо;
+- первую встречу с Егором;
+- доску расследования;
+- первую рабочую гипотезу;
+- agent-playable API поверх того же game core.
+
+### Запуск
+
+```bash
+cd web
+python3 -m http.server 8080
+```
+
+Открыть `http://localhost:8080`.
+
+### Проверки
+
+```bash
+cd web
+npm test
+npm run validate
+npm run agent-smoke
+```
+
+Browser visual smoke обязателен перед заявлением «готово» для заметных UI/gameplay изменений: см. [`docs/03-production/QUALITY_GATE.md`](docs/03-production/QUALITY_GATE.md).
+
+## Основные документы
+
+- [`docs/00-vision/VISUAL_BIBLE.md`](docs/00-vision/VISUAL_BIBLE.md) — визуальный язык и character lock;
 - [`docs/01-narrative/CHARACTERS.md`](docs/01-narrative/CHARACTERS.md) — Катерина, Егор и центральный cast;
 - [`docs/01-narrative/WORLD.md`](docs/01-narrative/WORLD.md) — вампиры, Эхо, резонанс и семь печатей;
-- [`docs/01-narrative/STORY_OUTLINE.md`](docs/01-narrative/STORY_OUTLINE.md) — центральное расследование и структура истории;
-- [`docs/02-game-design/MECHANICS.md`](docs/02-game-design/MECHANICS.md) — расследование, отношения, способности и fail-forward;
-- [`docs/03-production/AI_PLAYABILITY.md`](docs/03-production/AI_PLAYABILITY.md) — обязательный agent-playable контракт;
-- [`docs/03-production/VERTICAL_SLICE.md`](docs/03-production/VERTICAL_SLICE.md) — объём и acceptance первого playable slice.
-
-## Техническое направление
-
-Предварительная цель для первого vertical slice: **Ren'Py 8.x + отдельное Python game core**. UI человека и agent driver должны вызывать одни и те же игровые действия над одним состоянием.
-
-Движок окончательно фиксируется после проверки требований vertical slice, до масштабирования производства контента.
-
-## Текущий этап
-
-Narrative/game-design foundation → beat sheet пролога → технический bootstrap → vertical slice «Пролог + Глава 1».
+- [`docs/01-narrative/STORY_OUTLINE.md`](docs/01-narrative/STORY_OUTLINE.md) — центральное расследование;
+- [`docs/01-narrative/PROLOGUE_BEAT_SHEET.md`](docs/01-narrative/PROLOGUE_BEAT_SHEET.md) — драматургия playable slice;
+- [`docs/02-game-design/MECHANICS.md`](docs/02-game-design/MECHANICS.md) — расследование, отношения и способности;
+- [`docs/03-production/QUALITY_GATE.md`](docs/03-production/QUALITY_GATE.md) — обязательная проверка качества;
+- [`docs/03-production/VERTICAL_SLICE_QA.md`](docs/03-production/VERTICAL_SLICE_QA.md) — фактическая QA baseline.
