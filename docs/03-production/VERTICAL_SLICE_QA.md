@@ -1,37 +1,34 @@
-# Vertical Slice QA — baseline v0.1
+# Vertical Slice QA
 
-## Automated
+## Automated gates
 
-Фактически выполнено перед merge baseline:
+From `web/`:
 
-- `npm test` — 4/4 pass;
-- `npm run validate` — pass;
-- `npm run agent-smoke` — полный проход до `ending`, `completed=true`;
-- browser smoke — полный проход без page/console errors.
+```bash
+npm test
+npm run validate
+npm run agent-smoke
+npm run visual-qa
+```
 
-## Visual review
+`visual-qa` is dependency-free and drives the same `window.__NOVELLA__` core API as the human UI. It captures the acceptance set with one Chromium process and guarantees cleanup of its own process group.
 
-Фактически просмотрены реальные browser screenshots:
+Expected screenshots:
 
-- main menu;
-- phone overlay;
-- crime investigation;
-- seal tracing mini-game;
-- Egor first meeting;
-- investigation board;
-- ending.
+- `01-menu-1920x1080.png`
+- `02-apartment-1920x1080.png`
+- `02b-phone-1920x1080.png`
+- `03-investigation-1920x1080.png`
+- `04-echo-1920x1080.png`
+- `05-egor-1920x1080.png`
+- `06-evidence-board-1920x1080.png`
+- `07-menu-small-1366x768.png`
+- `08-egor-small-1366x768.png`
 
-Проверены viewports:
+## Mandatory human/art-direction review
 
-- 1920×1080;
-- 1366×768.
+Open every generated screenshot. Check composition, clipping, legibility, character consistency, excessive empty space, desktop responsiveness and whether the frame reads as a visual novel rather than a dashboard.
 
-## Self-review finding and fix
+If local Chromium is unstable, stop after the hard timeout. Do not loop/relaunch it. The GitHub Actions `visual-qa` job uploads the same screenshots as `visual-qa-screenshots`; review that artifact instead.
 
-Первый вариант сцены Егора оставлял за portrait случайно видимую часть sprite Катерины и слишком крупно масштабировал portrait. Это было обнаружено только после просмотра реального screenshot. Сцену исправили: Катерина убрана из POV-кадра, portrait Егора уменьшен до приемлемого масштаба и добавлен controlled vignette.
-
-Этот пример является причиной обязательного visual gate: код и automated tests такую проблему не обнаруживали.
-
-## Known production boundary
-
-Текущий Egor portrait годится для первого slice, но перед массовым производством CG/poses ему нужен отдельный locked reference pack. Катерина уже locked через `web/assets/katerina.webp` и не должна перегенерироваться.
+A visual task is not merge-ready until the screenshots have actually been opened and defects found in them have been corrected.

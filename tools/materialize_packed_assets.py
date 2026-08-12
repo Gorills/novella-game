@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import base64
-import io
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -9,44 +8,57 @@ PACKED = ROOT / "web" / "assets" / "packed"
 OUT = ROOT / "web" / "assets"
 
 
+def _parts(parts_dir: Path) -> list[Path]:
+    if not parts_dir.exists():
+        return []
+    return sorted(
+        p for p in parts_dir.iterdir()
+        if p.is_file() and not p.name.startswith(".")
+    )
+
+
+def _is_webp(data: bytes) -> bool:
+    return len(data) >= 12 and data.startswith(b"RIFF") and data[8:12] == b"WEBP"
+
+
 def _decode(parts_dir: Path) -> bytes:
-    parts = sorted(parts_dir.glob("pack*"))
+    parts = _parts(parts_dir)
     if not parts:
         raise RuntimeError(f"No packed parts found in {parts_dir}")
 
-    raw = b"".join(part.read_bytes() for part in parts)
-    compact = b"".join(raw.split())
-
-    # Packed files may contain base64 text, hex text, or raw binary chunks.
+    # Packed assets are transport chunks: every file is an independently
+    # base64-encoded byte slice. Decode each slice first, then concatenate the
+    # binary payload. Concatenating padded base64 strings before decoding is
+    # invalid and previously caused a hidden Pillow fallback in clean CI.
+    decoded_parts: list[bytes] = []
     try:
-        decoded = base64.b64decode(compact, validate=True)
-        if decoded.startswith((b"RIFF", b"\x89PNG", b"\xff\xd8\xff")):
+        for part in parts:
+            compact = b"".join(part.read_bytes().split())
+            decoded_parts.append(base64.b64decode(compact, validate=True))
+        decoded = b"".join(decoded_parts)
+        if _is_webp(decoded):
             return decoded
-    except Exception:
-        pass
+    except Exception as exc:
+        raise RuntimeError(f"Invalid packed WebP chunks in {parts_dir}: {exc}") from exc
 
-    try:
-        decoded = bytes.fromhex(compact.decode("ascii"))
-        if decoded.startswith((b"RIFF", b"\x89PNG", b"\xff\xd8\xff")):
-            return decoded
-    except Exception:
-        pass
-
-    return raw
+    raise RuntimeError(f"Packed asset in {parts_dir} is not a WebP payload")
 
 
 def _write_webp(name: str) -> None:
-    source = _decode(PACKED / name)
     target = OUT / f"{name}.webp"
+    source_dir = PACKED / name
 
-    if source.startswith(b"RIFF") and source[8:12] == b"WEBP":
-        target.write_bytes(source)
-        return
+    # A normal binary asset may be committed directly. In that case the packed
+    # transport fallback is intentionally optional.
+    if not _parts(source_dir):
+        if target.exists() and target.stat().st_size:
+            print(f"{name}: using committed binary asset")
+            return
+        raise RuntimeError(f"Neither packed source nor {target} exists")
 
-    from PIL import Image
-
-    image = Image.open(io.BytesIO(source))
-    image.save(target, "WEBP", quality=94, method=6)
+    source = _decode(source_dir)
+    target.write_bytes(source)
+    print(f"{name}: materialized {len(source)} bytes")
 
 
 def main() -> None:
