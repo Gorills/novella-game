@@ -1,0 +1,126 @@
+/* Production cinematic pass v1
+   Presentation-only: no game logic or hidden state lives here. */
+
+.film-grain {
+  position: absolute;
+  inset: -45%;
+  z-index: 6;
+  pointer-events: none;
+  opacity: .038;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.74' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.82'/%3E%3C/svg%3E");
+  animation: filmGrainShift .42s steps(2) infinite;
+}
+
+@keyframes filmGrainShift {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(1.5%, -1%); }
+  66% { transform: translate(-1%, 1.6%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* A scene render should feel like a camera cut, not a dashboard repaint. */
+.character-stage { animation: characterStageIn .42s cubic-bezier(.2,.7,.2,1) both; }
+.story-panel { animation: storyPanelIn .34s ease both; }
+
+@keyframes characterStageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes storyPanelIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Give procedural environments a small photographic-camera feel without
+   moving any gameplay hotspots or baking logic into art. */
+.scene-apartment .apartment-set { transform: scale(1.018) translateX(-.35%); filter: contrast(1.025) saturate(.92); }
+.scene-street .street-set { transform: scale(1.018); filter: contrast(1.025) saturate(.88); }
+.scene-crime .street-set,
+.scene-egor .street-set { transform: scale(1.024); filter: contrast(1.04) saturate(.82); }
+.scene-echo .echo-set { transform: scale(1.018); }
+
+/* Relationship language: after the player answers Egor, distance and light
+   change with the chosen boundary. No numerical relationship score is shown. */
+.mode-dialogue .character-stage { animation: none; }
+.mode-dialogue .pose-dialogue {
+  transition: left .35s ease, opacity .35s ease, filter .35s ease, transform .35s ease;
+}
+.mode-dialogue .egor-frame {
+  right: 4%;
+  bottom: 2%;
+  width: min(36vw, 590px);
+  height: min(68vh, 720px);
+  transition: right .35s ease, filter .35s ease, opacity .35s ease, transform .35s ease;
+  background: linear-gradient(180deg, rgba(5,7,12,.02), rgba(5,7,12,.16));
+}
+.mode-dialogue .egor-art {
+  object-position: 62% 31%;
+  transform: scale(1.055);
+}
+
+.relation-direct .dialogue-stage .pose-dialogue {
+  left: 8%;
+  opacity: .97;
+}
+.relation-direct .egor-frame {
+  right: 7%;
+  filter: drop-shadow(0 30px 60px rgba(0,0,0,.7)) brightness(1.07);
+}
+.relation-direct .story-panel {
+  border-color: rgba(205, 93, 122, .25);
+  background: linear-gradient(180deg, rgba(9,9,14,.88), rgba(7,7,11,.76));
+}
+
+.relation-sarcastic .egor-frame {
+  right: 5.5%;
+  transform: translateY(-3px);
+  filter: drop-shadow(0 30px 60px rgba(0,0,0,.7)) contrast(1.04);
+}
+.relation-sarcastic .story-panel { border-color: rgba(167, 104, 132, .22); }
+
+.relation-cold .dialogue-stage .pose-dialogue {
+  left: 3.2%;
+  opacity: .82;
+  filter: brightness(.84) saturate(.82);
+}
+.relation-cold .egor-frame {
+  right: 2.5%;
+  opacity: .86;
+  filter: drop-shadow(0 30px 60px rgba(0,0,0,.76)) brightness(.8) saturate(.78);
+}
+.relation-cold .story-panel {
+  border-color: rgba(111, 132, 171, .19);
+  background: linear-gradient(180deg, rgba(7,9,15,.91), rgba(6,7,12,.82));
+}
+
+/* The answer is a state change, so the response block receives a deliberate
+   visual beat instead of appearing as another generic paragraph. */
+.egor-response {
+  position: relative;
+  overflow: hidden;
+}
+.egor-response::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(#7d2946, #d26784, #7d2946);
+  opacity: .72;
+}
+.egor-response span,
+.egor-response p { position: relative; z-index: 1; }
+
+@media (max-width: 1450px) {
+  .mode-dialogue .egor-frame { width: 38vw; height: 63vh; right: 1.5%; }
+  .relation-direct .egor-frame { right: 4%; }
+  .relation-cold .egor-frame { right: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .film-grain,
+  .character-stage,
+  .story-panel { animation: none !important; }
+}
