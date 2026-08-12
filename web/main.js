@@ -65,7 +65,8 @@ function katya(extra = "") {
 }
 
 function egor() {
-  return `<div class="egor-frame"><img class="egor-art" src="${ASSETS.egor}" alt="Егор" draggable="false"/></div>`;
+  const reaction = state.flags.egor_exchanged || "neutral";
+  return `<div class="egor-frame egor-${reaction}"><img class="egor-art" src="${ASSETS.egor}" alt="Егор" draggable="false"/></div>`;
 }
 
 function skyline() {
@@ -165,6 +166,7 @@ function renderMenu(scene) {
   return `<main class="menu-screen">
     ${environment(scene)}
     <div class="menu-shade"></div>
+    <div class="film-grain" aria-hidden="true"></div>
     <div class="menu-hero">${katya("menu-katya")}</div>
     <section class="menu-copy">
       <div class="eyebrow">${scene.kicker}</div>
@@ -180,9 +182,11 @@ function renderMenu(scene) {
 function renderStory(scene) {
   const investigation = scene.mode === "investigation";
   const dialogue = scene.mode === "dialogue";
-  return `<main class="game-screen scene-${scene.id} mode-${scene.mode}">
+  const relation = dialogue ? ` relation-${state.flags.egor_exchanged || "neutral"}` : "";
+  return `<main class="game-screen scene-${scene.id} mode-${scene.mode}${relation}">
     ${environment(scene)}
     <div class="cinematic-vignette"></div>
+    <div class="film-grain" aria-hidden="true"></div>
     ${header(scene)}
     <div class="character-stage ${dialogue ? "dialogue-stage" : ""}">
       ${scene.id !== "echo" && scene.id !== "crime" && !dialogue ? katya(`pose-${scene.id}`) : ""}

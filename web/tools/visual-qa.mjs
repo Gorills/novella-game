@@ -190,6 +190,7 @@ async function runQa() {
     await act(cdp, sessionId, "scene.meet_egor");
     await shot(cdp, sessionId, "05-egor", 1920, 1080);
     await act(cdp, sessionId, "egor.direct");
+    await shot(cdp, sessionId, "05b-egor-direct-response", 1920, 1080);
     await act(cdp, sessionId, "scene.go_home");
     await act(cdp, sessionId, "board.open");
     await act(cdp, sessionId, "board.link.symbol_drag");
@@ -207,7 +208,7 @@ async function runQa() {
     await act(cdp, sessionId, "scene.meet_egor");
     await shot(cdp, sessionId, "08-egor-small", 1366, 768);
 
-    console.log("visual-qa: completed 8 acceptance screenshots using one Chromium process");
+    console.log("visual-qa: completed 9 acceptance screenshots using one Chromium process");
   } finally {
     try { if (cdp) await cdp.send("Browser.close"); } catch {}
     try { cdp?.close(); } catch {}

@@ -26,39 +26,40 @@ def _decode(parts_dir: Path) -> bytes:
     if not parts:
         raise RuntimeError(f"No packed parts found in {parts_dir}")
 
-    # Packed assets are transport chunks: every file is an independently
-    # base64-encoded byte slice. Decode each slice first, then concatenate the
-    # binary payload. Concatenating padded base64 strings before decoding is
-    # invalid and previously caused a hidden Pillow fallback in clean CI.
-    decoded_parts: list[bytes] = []
+    # Legacy Katerina transport is one continuous base64 stream split across
+    # text files at arbitrary byte boundaries. Concatenate first and restore
+    # only the final RFC 4648 padding that was lost by the old splitter.
+    raw = b"".join(part.read_bytes() for part in parts)
+    compact = b"".join(raw.split())
+    padded = compact + (b"=" * ((-len(compact)) % 4))
     try:
-        for part in parts:
-            compact = b"".join(part.read_bytes().split())
-            decoded_parts.append(base64.b64decode(compact, validate=True))
-        decoded = b"".join(decoded_parts)
-        if _is_webp(decoded):
-            return decoded
+        decoded = base64.b64decode(padded, validate=True)
     except Exception as exc:
-        raise RuntimeError(f"Invalid packed WebP chunks in {parts_dir}: {exc}") from exc
-
-    raise RuntimeError(f"Packed asset in {parts_dir} is not a WebP payload")
+        raise RuntimeError(f"Invalid packed WebP stream in {parts_dir}: {exc}") from exc
+    if not _is_webp(decoded):
+        raise RuntimeError(f"Packed asset in {parts_dir} is not a WebP payload")
+    return decoded
 
 
 def _write_webp(name: str) -> None:
     target = OUT / f"{name}.webp"
     source_dir = PACKED / name
 
-    # A normal binary asset may be committed directly. In that case the packed
-    # transport fallback is intentionally optional.
-    if not _parts(source_dir):
-        if target.exists() and target.stat().st_size:
-            print(f"{name}: using committed binary asset")
+    # Normal committed binary art is the source of truth. Validate its header
+    # and return before even looking at legacy packed transport.
+    if target.exists() and target.stat().st_size:
+        existing = target.read_bytes()
+        if _is_webp(existing):
+            print(f"{name}: using committed locked WebP ({len(existing)} bytes)")
             return
-        raise RuntimeError(f"Neither packed source nor {target} exists")
+        raise RuntimeError(f"Committed asset is not a valid WebP: {target}")
+
+    if not _parts(source_dir):
+        raise RuntimeError(f"Neither valid {target} nor packed source exists")
 
     source = _decode(source_dir)
     target.write_bytes(source)
-    print(f"{name}: materialized {len(source)} bytes")
+    print(f"{name}: materialized fallback {len(source)} bytes")
 
 
 def main() -> None:
