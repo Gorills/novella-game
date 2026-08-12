@@ -1,8 +1,19 @@
 const PACKED = {
-  apartment: ["./assets/packed/apartment/00.b64"],
-  crime: ["./assets/packed/crime/00.b64"],
-  echo: ["./assets/packed/echo/00.b64"],
-  katerina: Array.from({ length: 5 }, (_, i) => `./assets/packed/katerina/${String(i).padStart(2, "0")}.b64`)
+  apartment: [
+    "./assets/packed/apartment/00.b64",
+    "./assets/packed/apartment/01.b64"
+  ],
+  crime: [
+    "./assets/packed/crime/00.b64",
+    "./assets/packed/crime/01.b64",
+    "./assets/packed/crime/02.b64",
+    "./assets/packed/crime/03.b64"
+  ],
+  echo: [
+    "./assets/packed/echo/00.b64",
+    "./assets/packed/echo/01.b64",
+    "./assets/packed/echo/02.b64"
+  ]
 };
 
 const ART = {};
@@ -47,12 +58,6 @@ function applySceneArt() {
   if (echo && ART.echo) {
     echo.classList.add("production-art", "production-echo");
     echo.style.setProperty("--production-art", `url("${ART.echo}")`);
-  }
-
-  if (ART.katerina) {
-    app.querySelectorAll("img.katya, img.menu-katya").forEach((image) => {
-      if (image.src !== ART.katerina) image.src = ART.katerina;
-    });
   }
 }
 
