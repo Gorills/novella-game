@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PACKED = ROOT / "web" / "assets" / "packed"
 OUT = ROOT / "web" / "assets"
+QA = ROOT / "web" / ".qa"
 KATERINA_SHA256 = "2c917b598a8d364846eb65ab01c0c36dd9e6662c31aca657f9919e9bc9be780d"
 
 
@@ -57,6 +58,16 @@ def _verify_digest(name: str, data: bytes, expected_sha256: str | None) -> None:
         return
     actual = _sha256(data)
     if actual != expected_sha256:
+        # Diagnostic-only evidence for one deterministic CI comparison. This
+        # file is never used by runtime and the mismatch still fails the gate.
+        if name == "katerina":
+            QA.mkdir(parents=True, exist_ok=True)
+            debug_path = QA / "katerina-v2-decoded.webp"
+            debug_path.write_bytes(data)
+            print(
+                f"{name}: wrote mismatch evidence {debug_path} "
+                f"bytes={len(data)} sha256={actual}"
+            )
         raise RuntimeError(
             f"{name}: locked asset SHA-256 mismatch: expected {expected_sha256}, got {actual}"
         )
