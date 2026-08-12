@@ -6,7 +6,15 @@
 
 Канон: лицо, пропорции, татуировки и **обязательное тёмно-красное каре** нельзя переосмысливать без прямого решения пользователя.
 
-В clean checkout бинарный `katerina.webp` может отсутствовать: канонический transport-safe source хранится в `packed/katerina/` как один base64-поток, разбитый на отсортированные части. Перед CI/browser QA он материализуется `tools/materialize_packed_assets.py`.
+В clean checkout бинарный `katerina.webp` может отсутствовать. Канонический transport-safe source хранится в `packed/katerina-v2/` как один base64-поток, разбитый только для транспорта. Его ожидаемый SHA-256:
+
+```text
+2c917b598a8d364846eb65ab01c0c36dd9e6662c31aca657f9919e9bc9be780d
+```
+
+`tools/materialize_packed_assets.py` обязан проверить этот digest **до записи** `katerina.webp`. Несовпадение — жёсткая ошибка CI; повреждённый или частично перенесённый референс нельзя молча использовать в игре.
+
+Старый `packed/katerina/` считается legacy transport и больше не является источником canonical asset.
 
 ## Егор
 
@@ -16,7 +24,7 @@
 
 ## Packed fallback и materialization
 
-`packed/katerina/` — transport-safe canonical fallback. Части нельзя декодировать независимо: это фрагменты одного непрерывного base64-потока.
+Packed parts нельзя декодировать независимо: это фрагменты одного непрерывного base64-потока. Сначала части объединяются по имени, затем выполняется один strict base64 decode.
 
 Каноническая команда materialization:
 
@@ -25,4 +33,4 @@ python -m pip install "Pillow>=11,<13"
 python tools/materialize_packed_assets.py
 ```
 
-Если нормальный committed WebP существует, materializer использует его как приоритетный и не пересоздаёт из packed source.
+Для locked Катерины валидный WebP определяется не только RIFF-заголовком, но и точным SHA-256. Это защищает visual QA от ситуации, когда формально похожий на WebP повреждённый файл проходит pipeline, но не декодируется браузером.
