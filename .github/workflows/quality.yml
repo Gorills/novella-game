@@ -20,6 +20,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Install asset materializer dependency
+        run: python -m pip install --disable-pip-version-check "Pillow>=11,<13"
       - name: Prepare locked character assets
         run: python ../tools/materialize_packed_assets.py
       - name: Unit tests
@@ -39,6 +41,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Install asset materializer dependency
+        run: python -m pip install --disable-pip-version-check "Pillow>=11,<13"
       - name: Prepare locked character assets
         run: python ../tools/materialize_packed_assets.py
       - name: Resolve Chromium

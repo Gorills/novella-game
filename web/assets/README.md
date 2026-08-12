@@ -2,9 +2,11 @@
 
 ## Катерина
 
-`katerina.webp` — прямой production asset из пользовательского locked visual reference.
+`katerina.webp` — runtime/materialized production asset из пользовательского locked visual reference.
 
 Канон: лицо, пропорции, татуировки и **обязательное тёмно-красное каре** нельзя переосмысливать без прямого решения пользователя.
+
+В clean checkout бинарный `katerina.webp` может отсутствовать: канонический transport-safe source хранится в `packed/katerina/` как один base64-поток, разбитый на отсортированные части. Перед CI/browser QA он материализуется `tools/materialize_packed_assets.py`.
 
 ## Егор
 
@@ -12,8 +14,15 @@
 
 Перед расширением романтической линии нужно создать и отдельно visually approve полноценный locked Egor reference sheet.
 
-## Packed fallback
+## Packed fallback и materialization
 
-`packed/katerina/` остаётся transport-safe fallback для канонического референса Катерины. Нормальные бинарные `katerina.webp` / `egor.webp` имеют приоритет, если уже закоммичены.
+`packed/katerina/` — transport-safe canonical fallback. Части нельзя декодировать независимо: это фрагменты одного непрерывного base64-потока.
 
-`tools/materialize_packed_assets.py` умеет восстановить asset из любых отсортированных non-hidden chunks и не требует packed-директорию, если нормальный бинарный asset уже существует.
+Каноническая команда materialization:
+
+```bash
+python -m pip install "Pillow>=11,<13"
+python tools/materialize_packed_assets.py
+```
+
+Если нормальный committed WebP существует, materializer использует его как приоритетный и не пересоздаёт из packed source.
