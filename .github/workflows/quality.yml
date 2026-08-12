@@ -64,6 +64,7 @@ jobs:
           name: visual-qa-screenshots
           path: |
             web/.qa/screenshots
+            web/.qa/katerina-v2-decoded.webp
             web/assets/katerina.webp
           if-no-files-found: warn
           retention-days: 7
