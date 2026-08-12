@@ -1,0 +1,96 @@
+/* Production environment art pass. Functional UI remains in the baseline styles. */
+.production-art {
+  background-image: var(--production-art) !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  isolation: isolate;
+}
+.production-art > * { position: relative; z-index: 2; }
+.production-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.production-apartment {
+  background-position: center 48% !important;
+  filter: saturate(.88) contrast(1.04) brightness(.82);
+}
+.production-apartment::after {
+  background:
+    linear-gradient(90deg, rgba(4,5,8,.42), rgba(4,5,8,.06) 48%, rgba(4,5,8,.12)),
+    radial-gradient(circle at 24% 72%, rgba(217,145,76,.12), transparent 27%),
+    linear-gradient(180deg, rgba(0,0,0,.05), transparent 58%, rgba(0,0,0,.34));
+}
+.production-apartment .apartment-set { display:none; }
+.production-crime {
+  background-position:center 50% !important;
+  filter:saturate(.86) contrast(1.07) brightness(.78);
+}
+.production-crime::after {
+  background:
+    linear-gradient(90deg, rgba(2,4,7,.19), transparent 45%, rgba(2,3,6,.16)),
+    radial-gradient(circle at 22% 30%, rgba(67,96,143,.11), transparent 31%),
+    linear-gradient(180deg, rgba(0,0,0,.02), transparent 55%, rgba(0,0,0,.38));
+  box-shadow:inset 0 0 150px rgba(0,0,0,.46);
+}
+.production-crime .street-set { display:none; }
+.production-echo {
+  background-position:center 45% !important;
+  filter:saturate(.74) contrast(1.12) brightness(.72);
+}
+.production-echo::after {
+  background:
+    linear-gradient(90deg, rgba(7,2,6,.58), rgba(7,2,6,.04) 52%, rgba(7,2,6,.24)),
+    repeating-radial-gradient(circle at 68% 48%, transparent 0 50px, rgba(210,48,90,.025) 52px 53px);
+  box-shadow:inset 0 0 170px rgba(0,0,0,.55);
+  animation:productionEchoBreath 4.8s ease-in-out infinite;
+}
+.production-echo .echo-set { display:none; }
+.production-echo::before {
+  content:"";
+  position:absolute;
+  left:11%; top:17%;
+  width:190px; height:190px;
+  border:1px solid rgba(200,50,88,.22);
+  border-radius:50%;
+  z-index:2;
+  opacity:.55;
+  box-shadow:0 0 70px rgba(178,37,76,.18), inset 0 0 35px rgba(178,37,76,.08);
+}
+@keyframes productionEchoBreath { 0%,100%{opacity:.62} 50%{opacity:.9} }
+
+.menu-katya {
+  right:3% !important;
+  bottom:-7% !important;
+  height:108% !important;
+  max-width:61vw !important;
+  filter:drop-shadow(-28px 34px 58px rgba(0,0,0,.76)) !important;
+}
+.scene-apartment .pose-apartment { right:2.5% !important; height:95% !important; }
+.scene-crime .pose-crime { right:1% !important; height:93% !important; opacity:.96 !important; }
+.scene-board .pose-board { right:3% !important; height:92% !important; }
+
+.egor-frame {
+  overflow:visible !important;
+  -webkit-mask-image:radial-gradient(ellipse 78% 72% at 52% 43%, #000 0 55%, rgba(0,0,0,.94) 68%, transparent 100%) !important;
+  mask-image:radial-gradient(ellipse 78% 72% at 52% 43%, #000 0 55%, rgba(0,0,0,.94) 68%, transparent 100%) !important;
+}
+.egor-art { filter:contrast(1.04) saturate(.86) brightness(.88); }
+
+.mode-investigation .hotspot {
+  background:rgba(8,9,13,.58);
+  border-color:rgba(225,220,223,.16);
+  backdrop-filter:blur(9px);
+  box-shadow:0 8px 28px rgba(0,0,0,.28);
+}
+.mode-investigation .story-panel { background:linear-gradient(135deg,rgba(9,9,13,.88),rgba(9,9,13,.62)); }
+
+@media (max-width:1450px) {
+  .production-apartment { background-position:42% 48% !important; }
+  .production-crime { background-position:47% 50% !important; }
+  .production-echo { background-position:58% 45% !important; }
+  .menu-katya { right:-2% !important; height:104% !important; max-width:65vw !important; }
+}
+@media (prefers-reduced-motion: reduce) { .production-echo::after { animation:none; } }
