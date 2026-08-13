@@ -7,6 +7,6 @@
     "validate": "node tools/validate.mjs",
     "agent-smoke": "node tools/agent-smoke.mjs",
     "visual-qa": "node tools/visual-qa.mjs",
-    "ui-playtest": "node tools/ui-playtest.mjs"
+    "ui-playtest": "node tools/ui-playtest-v2.mjs"
   }
 }
