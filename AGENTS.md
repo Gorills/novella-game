@@ -22,15 +22,15 @@
 
 Ключевые правила:
 
-- только одна активная фаза за раз: preflight → narrative/logic implementation → logic verification → art/UI → real UI playtest → visual QA → fix → Git review → merge;
+- только одна активная фаза за раз: preflight → narrative/logic implementation → logic verification → art/UI → real UI playtest → visual QA → quality scorecard → fix → Git review → merge;
 - перед первой мутацией зафиксировать актуальный SHA `main`, отдельную branch, scope, DoD и acceptance screenshots;
 - после tool failure сначала диагностировать причину; запрещены слепые повторы;
 - один повтор допустим только после реального изменения условий;
 - один Chromium process tree на один QA-run;
 - один image-generation запрос решает одну asset-задачу; мокап/постер/contact sheet не принимается вместо production asset;
 - после каждой законченной фазы дать короткий checkpoint с фактическим состоянием;
-- заметная visual/gameplay работа идёт только через feature branch → PR → CI → открытые screenshots → fixes → merge → проверка actual `main`;
-- если gate не пройден, статус только `in progress` или конкретный `blocked`, но не `done`.
+- заметная visual/gameplay работа идёт только через feature branch → PR → CI → открытые full-size screenshots → scorecard → fixes → merge → проверка actual `main`;
+- если gate не пройден, статус только `in progress`, `REWORK`, `REJECT` или конкретный `blocked`, но не `done`.
 
 ## Приоритет источников истины
 
@@ -103,66 +103,59 @@
 3. реально запустить игру;
 4. пройти изменённый игровой путь **реальными UI-действиями** от входа до выхода;
 5. снять реальные screenshots ключевых состояний;
-6. открыть и визуально просмотреть screenshots;
-7. отдельно пройти `PLAYTEST_RUBRIC.md`;
-8. исправить найденные проблемы;
-9. повторить tests + agent smoke + UI playthrough + visual QA;
-10. проверить diff и состав файлов;
-11. открыть PR;
-12. убедиться, что PR mergeable и проверки зелёные;
-13. merge в `main`, если пользователь заранее разрешил merge;
-14. проверить итоговый SHA `main` и post-merge CI;
-15. только после этого считать задачу завершённой.
+6. открыть critical screenshots **по отдельности в полном размере**;
+7. отдельно пройти `PLAYTEST_RUBRIC.md` и заполнить 8-block Game Quality Scorecard;
+8. перечислить минимум 3 слабых места build;
+9. исправить всё, что не проходит пороги/hard-fail rules;
+10. повторить tests + agent smoke + UI playthrough + visual QA + scorecard;
+11. проверить diff и состав файлов;
+12. открыть PR;
+13. убедиться, что PR mergeable и проверки зелёные;
+14. merge в `main`, если пользователь заранее разрешил merge;
+15. проверить итоговый SHA `main` и post-merge CI;
+16. только после этого считать задачу завершённой.
 
 Если среда не позволяет выполнить один из gate-пунктов, агент обязан прямо сказать какой именно. Нельзя подменять проверку предположением.
 
-## Четыре обязательных вердикта каждого playtest
+## Единственный обязательный Game Quality Scorecard
 
-После любого заметного изменения игрового куска агент обязан дать четыре независимых вердикта:
+Прежняя модель «четыре PASS/FAIL-вердикта» больше не используется как acceptance gate.
 
-### Narrative Logic
+После любого заметного изменения игрового куска агент обязан оценить **все 8 блоков** из `docs/03-production/PLAYTEST_RUBRIC.md`:
 
-Проверить:
+1. Character Presence;
+2. Art Quality;
+3. UI/UX;
+4. Narrative Logic;
+5. Interest & Pacing;
+6. Gameplay Value;
+7. Tone & Atmosphere;
+8. Secondary Characters.
 
-- мотивацию каждого крупного действия;
-- cause → effect;
-- знания персонажа на текущий момент;
-- реалистичность поведения в опасности;
-- отсутствие внезапных профессиональных компетенций.
+Максимум — `40` баллов.
 
-### Interest & Pacing
+Минимальный production acceptance:
 
-Проверить:
+- `TOTAL >= 32/40`;
+- нет `HARD FAIL`;
+- ни один блок не ниже `3.5/5`;
+- `Character Presence >= 4/5`;
+- для visual/art pass `Art Quality >= 4/5`;
+- для UI/gameplay pass `UI/UX >= 4/5`;
+- `Interest & Pacing >= 3.5/5`;
+- ответ на «Would I voluntarily play the next 10 minutes?» — `YES`.
 
-- есть ли сцены, которые существуют только как переход;
-- не несутся ли reveal подряд без реакции;
-- есть ли спокойные character beats;
-- меняют ли choices что-то кроме текста кнопки;
-- создаёт ли финал конкретный вопрос, ради которого хочется продолжить.
+`3/5` означает «рабочий прототип», а не production PASS.
 
-### UI/UX Discoverability
+Нельзя компенсировать отсутствие Катерины хорошей логикой, мыльный арт хорошим UI, скучный gameplay красивым меню или кривую доску сильным текстом.
 
-Проверить:
+Для каждого блока scorecard обязан содержать:
 
-- понятен ли следующий игровой объект без знания API;
-- не спрятано ли обязательное действие в маленькой иконке;
-- телефон и reasoning workspace достаточно крупные;
-- first-use систем сопровождается заметным affordance;
-- все обязательные кнопки работают на 1366×768.
+- числовую оценку;
+- strongest evidence;
+- weakest point.
 
-### Visual Quality
-
-Проверить:
-
-- композицию;
-- иерархию;
-- читаемость;
-- глубину и свет;
-- соответствие character lock;
-- отсутствие ощущения dashboard/web prototype;
-- качество первого key-art экрана.
-
-Любой FAIL означает, что работа продолжается.
+Кроме этого обязателен список минимум из трёх слабых мест текущего build. Если reviewer не способен назвать слабости, review считается недостаточно критичным.
 
 ## Visual QA
 
@@ -178,9 +171,12 @@
 - согласованность масштаба и света персонажей;
 - отсутствие дешёвого generic-anime ощущения;
 - отсутствие вида «админки/дашборда»;
+- отсутствие размытого/размазанного production art;
 - минимум desktop 1920×1080 и один 1366×768 viewport.
 
-Production-арт не принимается автоматически только потому, что генерация завершилась. Его нужно открыть, осмотреть отдельно и в реальной сцене.
+Production-арт не принимается автоматически только потому, что генерация завершилась. Его нужно открыть, осмотреть отдельно в native size и в реальной сцене.
+
+**Contact sheet разрешён только как навигация. Он не считается доказательством visual review.** Critical screenshots открываются отдельно в полном размере.
 
 ### Screenshot acceptance для текущего пролога
 
@@ -197,6 +193,8 @@ Production-арт не принимается автоматически тол�
 - крупный home reasoning workspace;
 - ending hook;
 - menu и phone на 1366×768.
+
+Катерина должна быть **фактически видима на screenshot** обязательных character scenes. Наличие sprite в DOM не является доказательством.
 
 ### Безопасный browser QA
 
@@ -232,7 +230,11 @@ npm run ui-playtest
 
 - есть понятная цель игрока;
 - есть действие игрока, а не только чтение;
+- в vertical slice есть минимум 3 разных типа player action;
+- нет трёх и более последовательных «Продолжить/Идти дальше» без meaningful interaction;
 - choices соответствуют характеру Катерины;
+- choices не являются тремя косметическими перефразировками одной реакции;
+- альтернативы меняют хотя бы локальный state/context/reaction;
 - нет случайных тупиков;
 - будущий детективный gameplay не выдаёт готовую истину одной кнопкой;
 - способности дают фрагменты/преимущества с ценой;
@@ -240,6 +242,17 @@ npm run ui-playtest
 - конец сцены создаёт причину продолжить.
 
 Технически полный путь не означает автоматически хороший gameplay.
+
+## UI/UX QA
+
+- сюжетно обязательный click target не меньше `44×44 px`;
+- важная first-use система не спрятана в маленькой icon-only кнопке;
+- phone на desktop имеет usable body не уже `360 px`;
+- reasoning workspace/board занимает минимум `70%` viewport в активном режиме;
+- на 1366×768 обязательные CTA/choices видимы и кликабельны;
+- board/workspace connector endpoints попадают в anchors с погрешностью не более `8 px`;
+- connector lines не проходят через нерелевантные карточки и не создают ложную семантическую связь;
+- новый игрок за несколько секунд понимает, что сейчас важно и что можно сделать.
 
 ## Agent-playable contract
 
@@ -265,6 +278,7 @@ Agent observation не должен раскрывать авторские spoi
 - временные upload/test-файлы не попадают в PR;
 - перед PR сравнить branch с `main`;
 - PR описывает сделанное и фактическую проверку;
+- для заметной игровой итерации PR содержит полный 8-block scorecard;
 - после self-review и успешного quality gate PR merge-ится в `main`;
 - после merge проверить фактический SHA `main` и push-triggered quality gate;
 - не оставлять готовую работу только в ветке, если пользователь ждёт результат в `main`.
@@ -275,9 +289,12 @@ Agent observation не должен раскрывать авторские spoi
 
 - говорить «в main», если merge и проверка `main` не выполнены;
 - говорить «игру проверил», если она не запускалась;
-- говорить «интересно/логично», если не проведён narrative playtest;
-- говорить «арт проверен», если изображение не открывалось;
-- говорить «visual QA passed», если acceptance screenshots не открывались;
+- говорить «интересно/логично», если не проведён narrative/game-quality review;
+- говорить «арт проверен», если source asset и full-size screenshot не открывались;
+- говорить «visual QA passed», если acceptance screenshots не открывались отдельно;
+- ставить production PASS при `3/5`;
+- скрывать hard fail средним баллом;
+- выдавать contact sheet за полноценный visual review;
 - выдавать мокап за gameplay;
 - выдавать partial implementation за законченный slice.
 
@@ -298,6 +315,7 @@ Web vertical slice — `Пролог: Чужая кожа`.
 - домашний reasoning workspace вместо преждевременной «полицейской доски»;
 - личный первый вывод и hook;
 - agent-playable API;
-- automated tests, agent smoke, real UI playtest и screenshot QA.
+- automated tests, agent smoke, real UI playtest и screenshot QA;
+- Game Quality Scorecard, проходящий production thresholds.
 
 Следующие чаты развивают baseline, а не возвращают старую rushed-investigation логику без отдельного решения пользователя.
