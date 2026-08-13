@@ -1,31 +1,10 @@
-const PACKED = {
-  interior: [
-    "./assets/packed/apartment/00.b64",
-    "./assets/packed/apartment/01.b64"
-  ],
-  street: [
-    "./assets/packed/crime/00.b64",
-    "./assets/packed/crime/01.b64",
-    "./assets/packed/crime/02.b64",
-    "./assets/packed/crime/03.b64"
-  ],
-  echo: [
-    "./assets/packed/echo/00.b64",
-    "./assets/packed/echo/01.b64",
-    "./assets/packed/echo/02.b64"
-  ]
+const ART = {
+  menu: "./assets/scenes/menu-night.svg",
+  studio: "./assets/scenes/studio-night.svg",
+  street: "./assets/scenes/street-rain.svg",
+  echo: "./assets/scenes/echo-fracture.svg",
+  home: "./assets/scenes/apartment-night.svg"
 };
-
-const ART = {};
-
-async function packedDataUrl(parts) {
-  const chunks = await Promise.all(parts.map(async (url) => {
-    const response = await fetch(url, { cache: "force-cache" });
-    if (!response.ok) throw new Error(`Missing art chunk: ${url}`);
-    return (await response.text()).replace(/\s+/g, "");
-  }));
-  return `data:image/webp;base64,${chunks.join("")}`;
-}
 
 async function preload(url) {
   const image = new Image();
@@ -50,10 +29,10 @@ function applySceneArt() {
   const app = document.querySelector("#app");
   if (!app) return;
 
-  apply(app.querySelector(".scene-menu .environment"), ART.interior, "production-keyart");
-  apply(app.querySelector(".scene-studio .environment"), ART.interior, "production-studio");
-  apply(app.querySelector(".scene-home .environment"), ART.interior, "production-home");
-  apply(app.querySelector(".scene-ending .environment"), ART.interior, "production-ending");
+  apply(app.querySelector(".scene-menu .environment"), ART.menu, "production-keyart");
+  apply(app.querySelector(".scene-studio .environment"), ART.studio, "production-studio");
+  apply(app.querySelector(".scene-home .environment"), ART.home, "production-home");
+  apply(app.querySelector(".scene-ending .environment"), ART.home, "production-ending");
 
   for (const id of ["walk", "cordon", "egor"]) {
     apply(app.querySelector(`.scene-${id} .environment`), ART.street, `production-${id}`);
@@ -63,13 +42,7 @@ function applySceneArt() {
 }
 
 async function boot() {
-  const entries = await Promise.all(Object.entries(PACKED).map(async ([name, parts]) => {
-    const url = await packedDataUrl(parts);
-    await preload(url);
-    return [name, url];
-  }));
-
-  Object.assign(ART, Object.fromEntries(entries));
+  await Promise.all(Object.values(ART).map(preload));
   document.documentElement.dataset.productionArtReady = "true";
   applySceneArt();
   new MutationObserver(applySceneArt).observe(document.querySelector("#app"), { childList: true, subtree: true });
