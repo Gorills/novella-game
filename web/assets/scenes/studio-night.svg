@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" role="img" aria-label="Тату-студия Катерины поздним вечером">
+<defs>
+  <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#17161a"/><stop offset="1" stop-color="#0a0b0f"/></linearGradient>
+  <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#151317"/><stop offset="1" stop-color="#08080a"/></linearGradient>
+  <radialGradient id="lamp" cx="0" cy="0" r="1" gradientTransform="translate(682 635) rotate(90) scale(420 520)"><stop stop-color="#f0b474" stop-opacity=".38"/><stop offset=".42" stop-color="#9a573b" stop-opacity=".15"/><stop offset="1" stop-opacity="0"/></radialGradient>
+  <radialGradient id="city" cx="0" cy="0" r="1" gradientTransform="translate(1450 330) rotate(90) scale(460 580)"><stop stop-color="#557aa8" stop-opacity=".18"/><stop offset="1" stop-opacity="0"/></radialGradient>
+  <pattern id="rain" width="54" height="86" patternUnits="userSpaceOnUse" patternTransform="rotate(10)"><path d="M10 -10v45M39 28v42" stroke="#d2dde7" stroke-opacity=".12" stroke-width="2"/></pattern>
+</defs>
+<rect width="1920" height="1080" fill="#07080a"/>
+<rect width="1920" height="760" fill="url(#wall)"/>
+<rect y="760" width="1920" height="320" fill="url(#floor)"/>
+<!-- left work wall -->
+<rect x="0" y="0" width="470" height="820" fill="#101015"/>
+<rect x="74" y="104" width="310" height="436" rx="4" fill="#0b0b0e" stroke="#312a31" stroke-width="3"/>
+<g fill="#d8ccba" stroke="#7f776f" stroke-width="1">
+  <rect x="102" y="132" width="114" height="148" transform="rotate(-2 159 206)"/><rect x="240" y="133" width="112" height="148" transform="rotate(2 296 207)"/>
+  <rect x="102" y="307" width="114" height="192" transform="rotate(1 159 403)"/><rect x="240" y="307" width="112" height="192" transform="rotate(-1.5 296 403)"/>
+</g>
+<g stroke="#33222a" stroke-width="6" fill="none" stroke-linecap="round">
+  <path d="M124 199c23-58 59-46 70 5-28 28-49 20-70-5z"/><path d="M267 188c27-37 49-19 58 23l-31 41z"/><path d="M126 381c28-41 51-36 63 20-22 41-47 26-63-20z"/><path d="M266 382c22-28 43-19 56 17-20 25-39 22-56-17z"/><circle cx="294" cy="458" r="26"/><path d="M268 458h52M294 432v52"/>
+</g>
+<g transform="translate(90 586)"><rect width="288" height="62" rx="5" fill="#160b11" stroke="#76304a" stroke-width="2"/><text x="144" y="39" text-anchor="middle" fill="#d2849e" font-family="Arial,sans-serif" font-size="23" letter-spacing="8">INK / 23</text></g>
+<!-- central workbench -->
+<g transform="translate(470 630)">
+  <rect x="0" y="80" width="640" height="31" rx="6" fill="#28232a"/><rect x="28" y="111" width="28" height="250" fill="#17151a"/><rect x="580" y="111" width="28" height="250" fill="#17151a"/>
+  <rect x="40" y="28" width="250" height="52" rx="5" fill="#141318" stroke="#3b343d" stroke-width="2"/>
+  <rect x="319" y="37" width="102" height="43" rx="4" fill="#1b1820"/><circle cx="369" cy="58" r="13" fill="#a94266"/>
+  <path d="M464 80c6-120 66-148 96-76" fill="none" stroke="#62505a" stroke-width="10" stroke-linecap="round"/>
+  <ellipse cx="560" cy="16" rx="44" ry="30" fill="#f2b879" opacity=".78"/>
+  <g stroke="#8f405b" stroke-width="4" fill="none"><path d="M71 53l20-27 19 30 21-38 27 36"/><circle cx="207" cy="53" r="17"/></g>
+</g>
+<!-- chair -->
+<g transform="translate(770 493)">
+  <path d="M90 90h335l57 139-31 39H121l-74-67z" fill="#16151a" stroke="#403740" stroke-width="5"/>
+  <path d="M137 76V5h174v71" fill="#151419" stroke="#3a333a" stroke-width="5"/>
+  <rect x="157" y="252" width="28" height="266" fill="#17151a"/><rect x="389" y="252" width="28" height="266" fill="#17151a"/>
+  <path d="M144 512h289" stroke="#3f343c" stroke-width="10"/>
+</g>
+<!-- giant window right -->
+<rect x="1222" y="72" width="698" height="698" fill="#09101a" stroke="#303742" stroke-width="4"/>
+<path d="M1570 72v698" stroke="#343b46" stroke-width="7"/>
+<rect x="1222" y="72" width="698" height="698" fill="url(#rain)"/>
+<g fill="#0c121c"><rect x="1260" y="300" width="96" height="390"/><rect x="1371" y="240" width="120" height="450"/><rect x="1512" y="358" width="104" height="332"/><rect x="1640" y="206" width="138" height="484"/><rect x="1802" y="300" width="118" height="390"/></g>
+<g fill="#d1b980" opacity=".35"><rect x="1302" y="348" width="13" height="27"/><rect x="1431" y="301" width="15" height="31"/><rect x="1692" y="271" width="15" height="30"/><rect x="1847" y="360" width="14" height="26"/></g>
+<!-- props -->
+<g transform="translate(1188 805)"><rect width="177" height="86" rx="7" fill="#141218" stroke="#352f36"/><circle cx="48" cy="45" r="22" fill="#211d24"/><circle cx="113" cy="45" r="22" fill="#211d24"/><path d="M38 45h20M103 45h20" stroke="#8e3b59" stroke-width="4"/></g>
+<g transform="translate(1450 790)"><path d="M0 190h260l-26-132H32z" fill="#111015" stroke="#302a32" stroke-width="3"/><rect x="51" y="0" width="158" height="72" rx="18" fill="#18161c" stroke="#373139"/></g>
+<rect width="1920" height="1080" fill="url(#lamp)"/><rect width="1920" height="1080" fill="url(#city)"/>
+<!-- crisp foreground shadows -->
+<path d="M0 1018c310-64 520-58 760 25v37H0z" fill="#060608"/><path d="M1310 1050c216-46 408-51 610-12v42h-610z" fill="#060608"/>
+</svg>
