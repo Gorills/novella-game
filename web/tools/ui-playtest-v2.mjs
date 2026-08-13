@@ -351,7 +351,7 @@ async function scenario(cdp, sessionId, url, config) {
 
     await clickAction(cdp, sessionId, "hypothesis.seed");
     await clickAction(cdp, sessionId, "scene.meet_egor");
-    await checkText(cdp, sessionId, "Незнакомец, который опоздал", "Egor encounter");
+    await checkText(cdp, sessionId, "Если знак ответил тебе", "Egor encounter dialogue");
     for (const tone of ["direct","sarcastic","cold"]) await checkAction(cdp, sessionId, `egor.${tone}`, true, `Egor choice ${tone}`);
     if (config.capture) await screenshot(cdp, sessionId, `${config.name}-05-egor`);
     await clickAction(cdp, sessionId, `egor.${config.egor}`);
