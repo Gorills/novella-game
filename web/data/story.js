@@ -178,10 +178,11 @@ export const SCENES = {
     title: "Нормальность держится ещё пару минут",
     copy: [
       "Кощей встречает её у двери, обвиняюще смотрит на пустую миску и немедленно садится на куртку. Обычный кот. Обычная квартира. Именно этого Катерине сейчас и не хватало.",
-      "Она моет руки, ставит чайник и почти убеждает себя, что во дворе случилась паническая атака. Потом под ключицей снова начинает светиться тонкая линия."
+      "Руки всё ещё слегка дрожат после двора. Прежде чем разбираться с ними и со светом под кожей, Катерина решает вернуть вечеру хотя бы несколько привычных минут."
     ],
     actions: [
-      { id: "home.check_tattoo", label: "Проверить светящуюся линию", kind: "mystic", unlessFlag: "cat_spoke" },
+      { id: "home.feed_cat", label: "Насыпать Кощею корм и поставить чайник", kind: "quiet", unlessFlag: "home_settled" },
+      { id: "home.check_tattoo", label: "Теперь проверить странную линию", kind: "mystic", requiresFlag: "home_settled", unlessFlag: "cat_spoke" },
       { id: "koshchey.disbelief", label: "«Ты сейчас сказал?..»", tone: "direct", requiresFlag: "cat_spoke", unlessFlag: "cat_exchanged" },
       { id: "koshchey.sarcastic", label: "«Конечно. Почему бы коту не начать говорить.»", tone: "sarcastic", requiresFlag: "cat_spoke", unlessFlag: "cat_exchanged" },
       { id: "koshchey.careful", label: "Отойти. «Что ты такое?»", tone: "guarded", requiresFlag: "cat_spoke", unlessFlag: "cat_exchanged" },
