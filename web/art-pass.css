@@ -14,12 +14,41 @@
   pointer-events: none;
 }
 
-/* Katerina remains the exact locked reference, but main.js masks corrupted pixels
-   outside the silhouette. Prevent the old CSS background from drawing a second,
-   unmasked copy behind the inline SVG. */
+/* Katerina remains the exact locked reference. main.js masks pixels outside the
+   silhouette; these rules also prevent the old CSS background copy. */
 .katya-cutout {
   background: none !important;
   overflow: visible;
+  z-index: 1;
+}
+
+/* The canonical source contains a few baked dark rectangular artifacts close to
+   the silhouette. Do not repaint Katerina: stage her against a cinematic black
+   vignette so those source pixels disappear into the lighting. */
+.character-stage.right::before,
+.home-character::before,
+.ending-katya::before {
+  content:"";
+  position:absolute;
+  z-index:0;
+  top:0;
+  right:0;
+  width:42%;
+  height:100%;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent 0%,rgba(3,4,6,.7) 31%,rgba(2,3,5,.96) 67%,#020305 100%);
+  filter:blur(.2px);
+}
+.katya-side::before {
+  content:"";
+  position:absolute;
+  z-index:0;
+  top:0;
+  left:0;
+  width:37%;
+  height:100%;
+  pointer-events:none;
+  background:linear-gradient(90deg,#020305 0%,rgba(2,3,5,.95) 42%,rgba(3,4,6,.54) 74%,transparent 100%);
 }
 
 /* The old geometric glass rectangle made the title screen feel like a mockup. */
@@ -131,6 +160,9 @@
   .production-egor { background-position: 47% 50% !important; }
   .micro-beat { margin-top:9px; padding:8px 10px; }
   .micro-beat span { font-size:11px; }
+  .character-stage.right::before,
+  .home-character::before,
+  .ending-katya::before { width:46%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
