@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" role="img" aria-label="Фрагментированное мистическое Эхо">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07060a"/><stop offset=".48" stop-color="#171017"/><stop offset="1" stop-color="#050609"/></linearGradient>
+  <radialGradient id="pulse" cx="0" cy="0" r="1" gradientTransform="translate(995 515) rotate(90) scale(560 730)"><stop stop-color="#9c294d" stop-opacity=".24"/><stop offset=".42" stop-color="#4e1c34" stop-opacity=".08"/><stop offset="1" stop-opacity="0"/></radialGradient>
+  <linearGradient id="glass" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#c6d1d8" stop-opacity=".03"/><stop offset=".5" stop-color="#fff" stop-opacity=".13"/><stop offset="1" stop-color="#c6d1d8" stop-opacity=".02"/></linearGradient>
+</defs>
+<rect width="1920" height="1080" fill="url(#bg)"/><rect width="1920" height="1080" fill="url(#pulse)"/>
+<!-- architectural memory fragments -->
+<g opacity=".62">
+  <path d="M0 0h430l170 1080H0z" fill="#090b10"/><path d="M1490 0h430v1080h-600z" fill="#090b10"/>
+  <path d="M570 1080L820 90h310l250 990z" fill="#0b0b10"/>
+</g>
+<g stroke="#3b343e" stroke-width="3" opacity=".65"><path d="M487 0l180 1080M1430 0l-190 1080M823 92L650 1080M1118 92l168 988"/><path d="M744 355h440M705 552h514M668 770h589"/></g>
+<!-- fractured glass shards -->
+<g fill="url(#glass)" stroke="#87445e" stroke-opacity=".25" stroke-width="2">
+  <path d="M184 100l257 71-92 234-245-36z"/><path d="M418 430l236-101 79 290-275 69z"/><path d="M1267 148l298-56 81 275-332 71z"/><path d="M1180 535l298-74 121 286-337 92z"/><path d="M760 34l214 41-91 231-184-53z"/>
+</g>
+<!-- hand fragment -->
+<g transform="translate(1260 420) rotate(-13)" opacity=".72"><path d="M0 170c92-61 141-139 165-258 8-38 39-61 66-43 21 15 20 46 12 81l-25 101 47-142c12-35 39-48 62-31 18 14 17 40 7 71l-48 146 54-119c13-30 39-40 59-23 16 13 14 35 3 62l-70 160c-28 64-62 112-118 148l-121 79z" fill="#76636a" opacity=".33"/><path d="M33 167c78-51 122-127 146-239" fill="none" stroke="#ba8b99" stroke-opacity=".38" stroke-width="6" stroke-linecap="round"/></g>
+<!-- seal core -->
+<g transform="translate(960 535)" fill="none" stroke="#bb3c64">
+  <circle r="126" stroke-width="5" opacity=".34"/><circle r="78" stroke-width="4" opacity=".52"/><circle r="20" stroke-width="6"/>
+  <path d="M0-126v252M-126 0h252M-89-89l178 178M89-89l-178 178" stroke-width="4" opacity=".64"/>
+  <path d="M-170-18c95-62 236-68 340 0M-160 51c90 55 228 61 320 0" stroke-width="3" opacity=".26"/>
+</g>
+<!-- voice traces -->
+<g fill="#c7aab4" font-family="Georgia,serif" font-style="italic"><text x="210" y="338" font-size="42" opacity=".26">…не туда…</text><text x="1410" y="790" font-size="30" opacity=".13">не смотри</text><text x="642" y="914" font-size="27" opacity=".13">поздно</text></g>
+<!-- fracture strokes -->
+<g stroke="#d4587e" stroke-opacity=".22" fill="none" stroke-linecap="round"><path d="M956 0l-46 224 57 74-91 146 69 102-116 243" stroke-width="4"/><path d="M1528 0l-114 184 62 83-92 121 44 91-140 198" stroke-width="3"/><path d="M328 1080l126-191-44-94 132-184-35-87 101-164" stroke-width="3"/></g>
+<!-- vignette without blur -->
+<path d="M0 0h1920v1080H0zM130 120v840h1660V120z" fill="#000" fill-rule="evenodd" opacity=".18"/>
+</svg>
