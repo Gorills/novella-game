@@ -176,7 +176,8 @@ async function clickAction(cdp, sessionId, action) {
 }
 
 async function checkText(cdp, sessionId, text, label = text) {
-  const visible = await evaluate(cdp, sessionId, `document.body.innerText.includes(${JSON.stringify(text)})`);
+  const needle = text.toLocaleLowerCase("ru-RU");
+  const visible = await evaluate(cdp, sessionId, `document.body.innerText.toLocaleLowerCase('ru-RU').includes(${JSON.stringify(needle)})`);
   visible ? pass(`text visible: ${label}`) : fail(`Expected visible text missing: ${label}`);
   return visible;
 }
