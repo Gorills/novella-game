@@ -24,8 +24,12 @@ function reachHome(egorTone = "direct", echoFocus = "voice") {
   return s;
 }
 
+function settleHome(s) {
+  return A(s, "home.feed_cat");
+}
+
 function reachDesk(reply = "partial") {
-  let s = reachHome();
+  let s = settleHome(reachHome());
   s = A(s, "home.check_tattoo");
   s = A(s, "koshchey.disbelief");
   s = A(s, "phone.open");
@@ -95,12 +99,19 @@ test("Egor choices keep agency without granting him exposition authority", () =>
   assert.ok(s.katyaGuard > 72);
 });
 
-test("Koshchey cannot speak before the tattoo flares again at home", () => {
+test("Koshchey stays an ordinary cat for a full home beat before speaking", () => {
   let s = reachHome();
   assert.equal(s.sceneId, "home");
   assert.equal(Boolean(s.flags.cat_spoke), false);
+  assert.equal(has(s, "home.feed_cat"), true);
+  assert.equal(has(s, "home.check_tattoo"), false);
   assert.equal(has(s, "phone.open"), false);
-  assert.equal(has(s, "koshchey.disbelief"), false);
+
+  s = A(s, "home.feed_cat");
+  assert.equal(s.flags.home_settled, true);
+  assert.equal(has(s, "home.feed_cat"), false);
+  assert.equal(has(s, "home.check_tattoo"), true);
+  assert.equal(Boolean(s.flags.cat_spoke), false);
 
   s = A(s, "home.check_tattoo");
   assert.equal(s.flags.cat_spoke, true);
@@ -114,7 +125,7 @@ test("Koshchey cannot speak before the tattoo flares again at home", () => {
 });
 
 test("Sofia message opens the personal reasoning workspace, not a police board", () => {
-  let s = reachHome("sarcastic", "voice");
+  let s = settleHome(reachHome("sarcastic", "voice"));
   s = A(s, "home.check_tattoo");
   s = A(s, "koshchey.careful");
   s = A(s, "phone.open");
