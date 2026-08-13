@@ -8,10 +8,24 @@ import { tmpdir } from "node:os";
 
 const WEB_ROOT = fileURLToPath(new URL("../", import.meta.url));
 const OUT = join(WEB_ROOT, ".qa", "screenshots");
-const RUN_TIMEOUT_MS = Number(process.env.VISUAL_QA_TIMEOUT_MS || 90000);
+const RUN_TIMEOUT_MS = Number(process.env.VISUAL_QA_TIMEOUT_MS || 120000);
 const STEP_TIMEOUT_MS = 15000;
-const CANDIDATES = [process.env.CHROMIUM_PATH, "/usr/bin/chromium", "/usr/bin/chromium-browser", "/usr/bin/google-chrome", "/usr/bin/google-chrome-stable"].filter(Boolean);
-const mime = { ".html":"text/html; charset=utf-8", ".js":"text/javascript; charset=utf-8", ".css":"text/css; charset=utf-8", ".webp":"image/webp", ".png":"image/png", ".jpg":"image/jpeg", ".svg":"image/svg+xml" };
+const CANDIDATES = [
+  process.env.CHROMIUM_PATH,
+  "/usr/bin/chromium",
+  "/usr/bin/chromium-browser",
+  "/usr/bin/google-chrome",
+  "/usr/bin/google-chrome-stable"
+].filter(Boolean);
+const MIME = {
+  ".html":"text/html; charset=utf-8",
+  ".js":"text/javascript; charset=utf-8",
+  ".css":"text/css; charset=utf-8",
+  ".webp":"image/webp",
+  ".png":"image/png",
+  ".jpg":"image/jpeg",
+  ".svg":"image/svg+xml"
+};
 
 function chromiumPath() {
   const found = CANDIDATES.find(existsSync);
@@ -22,16 +36,17 @@ function chromiumPath() {
 function staticServer() {
   const server = http.createServer(async (req, res) => {
     try {
-      const requested = new URL(req.url || "/", "http://127.0.0.1").pathname;
-      const relative = requested === "/" ? "index.html" : requested.replace(/^\/+/, "");
+      const pathname = new URL(req.url || "/", "http://127.0.0.1").pathname;
+      const relative = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
       const safe = normalize(relative).replace(/^(\.\.[/\\])+/, "");
       const path = join(WEB_ROOT, safe);
-      if (!path.startsWith(WEB_ROOT)) throw new Error("bad path");
+      if (!path.startsWith(WEB_ROOT)) throw new Error("invalid path");
       const body = await readFile(path);
-      res.writeHead(200, { "content-type": mime[extname(path)] || "application/octet-stream", "cache-control": "no-store" });
+      res.writeHead(200, { "content-type": MIME[extname(path)] || "application/octet-stream", "cache-control": "no-store" });
       res.end(body);
     } catch {
-      res.writeHead(404); res.end("not found");
+      res.writeHead(404);
+      res.end("not found");
     }
   });
   return new Promise((resolve, reject) => {
@@ -40,7 +55,7 @@ function staticServer() {
   });
 }
 
-function launchChromium(url, userDataDir) {
+function launchChromium(userDataDir) {
   return new Promise((resolve, reject) => {
     const child = spawn(chromiumPath(), [
       "--headless=new",
@@ -68,7 +83,7 @@ function launchChromium(url, userDataDir) {
       const match = stderr.match(/DevTools listening on (ws:\/\/[^\s]+)/);
       if (match) {
         clearTimeout(timer);
-        resolve({ child, wsUrl: match[1], url });
+        resolve({ child, wsUrl: match[1] });
       }
     });
     child.once("error", (error) => { clearTimeout(timer); reject(error); });
@@ -87,12 +102,12 @@ class CDP {
     this.nextId = 1;
     this.pending = new Map();
     this.ws.addEventListener("message", (event) => {
-      const msg = JSON.parse(event.data);
-      if (!msg.id) return;
-      const p = this.pending.get(msg.id);
-      if (!p) return;
-      this.pending.delete(msg.id);
-      msg.error ? p.reject(new Error(msg.error.message)) : p.resolve(msg.result);
+      const message = JSON.parse(event.data);
+      if (!message.id) return;
+      const pending = this.pending.get(message.id);
+      if (!pending) return;
+      this.pending.delete(message.id);
+      message.error ? pending.reject(new Error(message.error.message)) : pending.resolve(message.result);
     });
   }
   async ready() {
@@ -100,31 +115,27 @@ class CDP {
     await new Promise((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error("CDP websocket timeout")), STEP_TIMEOUT_MS);
       this.ws.addEventListener("open", () => { clearTimeout(timer); resolve(); }, { once: true });
-      this.ws.addEventListener("error", (e) => { clearTimeout(timer); reject(e); }, { once: true });
+      this.ws.addEventListener("error", (error) => { clearTimeout(timer); reject(error); }, { once: true });
     });
   }
   send(method, params = {}, sessionId) {
     const id = this.nextId++;
     return new Promise((resolve, reject) => {
-      const timer = setTimeout(() => { this.pending.delete(id); reject(new Error(`CDP timeout: ${method}`)); }, STEP_TIMEOUT_MS);
-      this.pending.set(id, { resolve: (v) => { clearTimeout(timer); resolve(v); }, reject: (e) => { clearTimeout(timer); reject(e); } });
+      const timer = setTimeout(() => {
+        this.pending.delete(id);
+        reject(new Error(`CDP timeout: ${method}`));
+      }, STEP_TIMEOUT_MS);
+      this.pending.set(id, {
+        resolve: (value) => { clearTimeout(timer); resolve(value); },
+        reject: (error) => { clearTimeout(timer); reject(error); }
+      });
       this.ws.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }));
     });
   }
   close() { try { this.ws.close(); } catch {} }
 }
 
-async function sleep(ms) { await new Promise((r) => setTimeout(r, ms)); }
-
-async function waitForReady(cdp, sessionId) {
-  const started = Date.now();
-  while (Date.now() - started < STEP_TIMEOUT_MS) {
-    const result = await cdp.send("Runtime.evaluate", { expression: "Boolean(window.__NOVELLA__) && document.readyState !== 'loading' && document.documentElement.dataset.productionArtReady === 'true'", returnByValue: true }, sessionId);
-    if (result.result.value) return;
-    await sleep(120);
-  }
-  throw new Error("Game did not become ready");
-}
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function evaluate(cdp, sessionId, expression) {
   const result = await cdp.send("Runtime.evaluate", { expression, awaitPromise: true, returnByValue: true }, sessionId);
@@ -132,8 +143,14 @@ async function evaluate(cdp, sessionId, expression) {
   return result.result.value;
 }
 
-async function setViewport(cdp, sessionId, width, height) {
-  await cdp.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false }, sessionId);
+async function waitForReady(cdp, sessionId) {
+  const started = Date.now();
+  while (Date.now() - started < STEP_TIMEOUT_MS) {
+    const ready = await evaluate(cdp, sessionId, "Boolean(window.__NOVELLA__) && document.documentElement.dataset.productionArtReady === 'true'");
+    if (ready) return;
+    await sleep(100);
+  }
+  throw new Error("Game did not become ready");
 }
 
 async function waitForImages(cdp, sessionId) {
@@ -146,31 +163,26 @@ async function waitForImages(cdp, sessionId) {
   throw new Error("Scene images did not finish loading");
 }
 
+async function setViewport(cdp, sessionId, width, height) {
+  await cdp.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false }, sessionId);
+}
+
 async function shot(cdp, sessionId, name, width, height) {
   await setViewport(cdp, sessionId, width, height);
   await waitForImages(cdp, sessionId);
-  await sleep(120);
-  const data = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true, captureBeyondViewport: false }, sessionId);
+  await sleep(180);
+  const result = await cdp.send("Page.captureScreenshot", { format: "png", fromSurface: true, captureBeyondViewport: false }, sessionId);
   const path = join(OUT, `${name}-${width}x${height}.png`);
-  await writeFile(path, Buffer.from(data.data, "base64"));
+  await writeFile(path, Buffer.from(result.data, "base64"));
   console.log(`screenshot: ${path}`);
 }
 
-async function act(cdp, sessionId, id, payload = {}) {
-  const expr = `window.__NOVELLA__.act(${JSON.stringify(id)}, ${JSON.stringify(payload)})`;
-  return evaluate(cdp, sessionId, expr);
+async function act(cdp, sessionId, id) {
+  return evaluate(cdp, sessionId, `window.__NOVELLA__.act(${JSON.stringify(id)})`);
 }
 
-async function reset(cdp, sessionId) { return evaluate(cdp, sessionId, "window.__NOVELLA__.reset()"); }
-
-async function completeApartment(cdp, sessionId, reply = "sarcastic") {
-  await act(cdp, sessionId, "phone.open");
-  await act(cdp, sessionId, `phone.reply.${reply}`);
-  await act(cdp, sessionId, "apartment.inspect_sketch");
-}
-
-async function collectCrimeClues(cdp, sessionId) {
-  for (const clue of ["symbol_ground", "pendant", "drag_marks"]) await act(cdp, sessionId, `inspect.${clue}`);
+async function reset(cdp, sessionId) {
+  return evaluate(cdp, sessionId, "window.__NOVELLA__.reset()");
 }
 
 async function runQa() {
@@ -179,10 +191,10 @@ async function runQa() {
   const url = `http://127.0.0.1:${port}/`;
   const userDataDir = join(tmpdir(), `novella-visual-qa-${process.pid}-${Date.now()}`);
   await mkdir(userDataDir, { recursive: true });
-  let chrome;
-  let cdp;
+  let chrome, cdp;
+
   try {
-    chrome = await launchChromium(url, userDataDir);
+    chrome = await launchChromium(userDataDir);
     cdp = new CDP(chrome.wsUrl);
     await cdp.ready();
     const { targetId } = await cdp.send("Target.createTarget", { url });
@@ -192,53 +204,57 @@ async function runQa() {
     await setViewport(cdp, sessionId, 1920, 1080);
     await waitForReady(cdp, sessionId);
 
-    await shot(cdp, sessionId, "01-menu", 1920, 1080);
+    await shot(cdp, sessionId, "01-menu-keyart", 1920, 1080);
     await act(cdp, sessionId, "game.start");
-    await shot(cdp, sessionId, "02-apartment", 1920, 1080);
-    await act(cdp, sessionId, "phone.open");
-    await shot(cdp, sessionId, "02b-phone", 1920, 1080);
-    await act(cdp, sessionId, "phone.reply.sarcastic");
-    await act(cdp, sessionId, "apartment.inspect_sketch");
-    await act(cdp, sessionId, "scene.go_street");
-    await act(cdp, sessionId, "street.touch_seal");
-    await act(cdp, sessionId, "scene.go_crime");
-    await shot(cdp, sessionId, "03-investigation", 1920, 1080);
-    await collectCrimeClues(cdp, sessionId);
-    await act(cdp, sessionId, "seal.begin");
-    for (const node of [2,4,1,5,3]) await act(cdp, sessionId, "seal.node", { node });
-    await shot(cdp, sessionId, "04-echo", 1920, 1080);
-    await act(cdp, sessionId, "hypothesis.seed");
-    await act(cdp, sessionId, "scene.meet_egor");
-    await shot(cdp, sessionId, "05-egor", 1920, 1080);
+    await shot(cdp, sessionId, "02-studio-ordinary-life", 1920, 1080);
+    await act(cdp, sessionId, "studio.inspect_sketch");
+    await act(cdp, sessionId, "studio.close");
+    await act(cdp, sessionId, "walk.continue");
+    await shot(cdp, sessionId, "03-cordon-safe-side", 1920, 1080);
+    await act(cdp, sessionId, "cordon.notice_symbol");
+    await shot(cdp, sessionId, "04-echo-involuntary", 1920, 1080);
+    await act(cdp, sessionId, "echo.focus.voice");
+    await act(cdp, sessionId, "echo.break");
+    await shot(cdp, sessionId, "05-egor-first-contact", 1920, 1080);
     await act(cdp, sessionId, "egor.direct");
-    await shot(cdp, sessionId, "05b-egor-direct-response", 1920, 1080);
     await act(cdp, sessionId, "scene.go_home");
-    await act(cdp, sessionId, "board.open");
-    await act(cdp, sessionId, "board.link.symbol_drag");
-    await act(cdp, sessionId, "board.link.echo_symbol");
-    await shot(cdp, sessionId, "06-evidence-board", 1920, 1080);
+    await shot(cdp, sessionId, "06-home-before-koshchey", 1920, 1080);
+    await act(cdp, sessionId, "home.check_tattoo");
+    await shot(cdp, sessionId, "07-koshchey-speaks", 1920, 1080);
+    await act(cdp, sessionId, "koshchey.disbelief");
+    await act(cdp, sessionId, "phone.open");
+    await shot(cdp, sessionId, "08-phone-first-use", 1920, 1080);
+    await act(cdp, sessionId, "phone.reply.partial");
+    await act(cdp, sessionId, "desk.open");
+    await act(cdp, sessionId, "desk.link.sketch_symbol");
+    await act(cdp, sessionId, "desk.link.symbol_tattoo");
+    await shot(cdp, sessionId, "09-home-reasoning-workspace", 1920, 1080);
+    await act(cdp, sessionId, "desk.form_thought");
+    await act(cdp, sessionId, "scene.finish");
+    await shot(cdp, sessionId, "10-ending-hook", 1920, 1080);
 
     await reset(cdp, sessionId);
-    await shot(cdp, sessionId, "07-menu-small", 1366, 768);
+    await shot(cdp, sessionId, "11-menu-keyart-small", 1366, 768);
     await act(cdp, sessionId, "game.start");
-    await completeApartment(cdp, sessionId, "silent");
-    await act(cdp, sessionId, "scene.go_street");
-    await act(cdp, sessionId, "scene.go_crime");
-    await collectCrimeClues(cdp, sessionId);
-    await act(cdp, sessionId, "seal.begin");
-    for (const node of [2,4,1,5,3]) await act(cdp, sessionId, "seal.node", { node });
-    await act(cdp, sessionId, "scene.meet_egor");
-    await shot(cdp, sessionId, "08-egor-small", 1366, 768);
+    await act(cdp, sessionId, "studio.inspect_sketch");
+    await act(cdp, sessionId, "studio.close");
+    await act(cdp, sessionId, "walk.continue");
+    await act(cdp, sessionId, "cordon.notice_symbol");
+    await act(cdp, sessionId, "echo.focus.hand");
+    await act(cdp, sessionId, "echo.break");
+    await act(cdp, sessionId, "egor.guarded");
+    await act(cdp, sessionId, "scene.go_home");
+    await act(cdp, sessionId, "home.check_tattoo");
+    await act(cdp, sessionId, "koshchey.careful");
+    await act(cdp, sessionId, "phone.open");
+    await shot(cdp, sessionId, "12-phone-small", 1366, 768);
 
-    console.log("visual-qa: completed 9 acceptance screenshots using one Chromium process");
+    console.log("visual-qa: completed 12 acceptance screenshots for rebuilt prologue");
   } finally {
     try { if (cdp) await cdp.send("Browser.close"); } catch {}
     try { cdp?.close(); } catch {}
     if (chrome?.child?.pid && chrome.child.exitCode === null) {
-      try {
-        if (process.platform === "win32") chrome.child.kill("SIGKILL");
-        else process.kill(-chrome.child.pid, "SIGTERM");
-      } catch {}
+      try { process.platform === "win32" ? chrome.child.kill("SIGKILL") : process.kill(-chrome.child.pid, "SIGTERM"); } catch {}
       await sleep(800);
       if (chrome.child.exitCode === null) {
         try { process.platform === "win32" ? chrome.child.kill("SIGKILL") : process.kill(-chrome.child.pid, "SIGKILL"); } catch {}
@@ -253,6 +269,7 @@ let timeoutHandle;
 const timeout = new Promise((_, reject) => {
   timeoutHandle = setTimeout(() => reject(new Error(`visual-qa exceeded ${RUN_TIMEOUT_MS}ms hard timeout`)), RUN_TIMEOUT_MS);
 });
+
 try {
   await Promise.race([runQa(), timeout]);
 } catch (error) {
