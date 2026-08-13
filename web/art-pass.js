@@ -1,9 +1,9 @@
 const PACKED = {
-  apartment: [
+  interior: [
     "./assets/packed/apartment/00.b64",
     "./assets/packed/apartment/01.b64"
   ],
-  crime: [
+  street: [
     "./assets/packed/crime/00.b64",
     "./assets/packed/crime/01.b64",
     "./assets/packed/crime/02.b64",
@@ -30,7 +30,9 @@ async function packedDataUrl(parts) {
 async function preload(url) {
   const image = new Image();
   image.src = url;
-  try { await image.decode(); } catch {
+  try {
+    await image.decode();
+  } catch {
     await new Promise((resolve, reject) => {
       image.addEventListener("load", resolve, { once: true });
       image.addEventListener("error", reject, { once: true });
@@ -38,27 +40,26 @@ async function preload(url) {
   }
 }
 
+function apply(element, art, className) {
+  if (!element || !art) return;
+  element.classList.add("production-art", className);
+  element.style.setProperty("--production-art", `url("${art}")`);
+}
+
 function applySceneArt() {
   const app = document.querySelector("#app");
   if (!app) return;
 
-  const apartment = app.querySelector(".scene-apartment .apartment-environment, .scene-board .apartment-environment");
-  if (apartment && ART.apartment) {
-    apartment.classList.add("production-art", "production-apartment");
-    apartment.style.setProperty("--production-art", `url("${ART.apartment}")`);
+  apply(app.querySelector(".scene-menu .environment"), ART.interior, "production-keyart");
+  apply(app.querySelector(".scene-studio .environment"), ART.interior, "production-studio");
+  apply(app.querySelector(".scene-home .environment"), ART.interior, "production-home");
+  apply(app.querySelector(".scene-ending .environment"), ART.interior, "production-ending");
+
+  for (const id of ["walk", "cordon", "egor"]) {
+    apply(app.querySelector(`.scene-${id} .environment`), ART.street, `production-${id}`);
   }
 
-  const crime = app.querySelector(".scene-crime .crime-environment, .scene-egor .crime-environment");
-  if (crime && ART.crime) {
-    crime.classList.add("production-art", "production-crime");
-    crime.style.setProperty("--production-art", `url("${ART.crime}")`);
-  }
-
-  const echo = app.querySelector(".scene-echo .echo-environment");
-  if (echo && ART.echo) {
-    echo.classList.add("production-art", "production-echo");
-    echo.style.setProperty("--production-art", `url("${ART.echo}")`);
-  }
+  apply(app.querySelector(".scene-echo .environment"), ART.echo, "production-echo");
 }
 
 async function boot() {
@@ -67,6 +68,7 @@ async function boot() {
     await preload(url);
     return [name, url];
   }));
+
   Object.assign(ART, Object.fromEntries(entries));
   document.documentElement.dataset.productionArtReady = "true";
   applySceneArt();
