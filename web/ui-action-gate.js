@@ -5,16 +5,30 @@ function allowedActionIds() {
   return new Set(window.__NOVELLA__.actions().map((action) => action.id));
 }
 
+function hideByCore(element) {
+  if (element.dataset.coreGateHidden === "1") return;
+  element.dataset.coreGateHidden = "1";
+  element.hidden = true;
+  element.setAttribute("aria-hidden", "true");
+  element.style.setProperty("display", "none", "important");
+}
+
+function showByCore(element) {
+  if (element.dataset.coreGateHidden !== "1") return;
+  delete element.dataset.coreGateHidden;
+  element.hidden = false;
+  element.removeAttribute("aria-hidden");
+  element.style.removeProperty("display");
+}
+
 function reconcile() {
   const allowed = allowedActionIds();
   if (!allowed || !root) return;
 
   for (const element of root.querySelectorAll("[data-action]")) {
-    const id = element.dataset.action;
-    const isAllowed = allowed.has(id);
-    if (element.hidden === !isAllowed) continue;
-    element.hidden = !isAllowed;
-    element.setAttribute("aria-hidden", isAllowed ? "false" : "true");
+    const isAllowed = allowed.has(element.dataset.action);
+    if (isAllowed) showByCore(element);
+    else hideByCore(element);
   }
 }
 
