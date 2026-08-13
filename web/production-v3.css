@@ -1,0 +1,170 @@
+/* Second visual-direction pass after full-size screenshot review. */
+
+/* Locked Katerina is framed like a VN character, not a character-sheet export. */
+.katya-cutout { overflow:hidden !important; }
+.katya-cutout image { transform-box:fill-box; transform-origin:50% 8%; }
+.menu-katya .katya-cutout image { transform:scale(1.30); }
+.character-stage.right .katya-cutout image,
+.home-character .katya-cutout image,
+.ending-katya .katya-cutout image { transform:scale(1.38); }
+.katya-side .katya-cutout image { transform:scale(1.42); }
+.echo-katya .katya-cutout image { transform:scale(1.44); }
+
+/* New environment SVGs already carry their props. Never double-render old CSS props. */
+.scene-studio .studio-props,
+.scene-cordon .street-props { display:none !important; }
+
+/* Phone: the phone itself is the game object; the explanatory web-card was redundant. */
+.phone-context { display:none !important; }
+.phone-overlay { gap:0 !important; background:rgba(2,3,6,.18); }
+.overlay-backdrop { background:rgba(2,3,6,.62) !important; backdrop-filter:blur(6px) !important; }
+.phone-device { width:min(560px,48vw) !important; }
+
+/* Egor: portrait becomes a cinematic bust with soft edges rather than a square image card. */
+.egor-frame {
+  right:1.5% !important;
+  bottom:-1% !important;
+  width:min(46vw,760px) !important;
+  height:91% !important;
+  overflow:hidden !important;
+  pointer-events:none;
+}
+.egor-art {
+  width:112% !important;
+  height:112% !important;
+  object-fit:cover !important;
+  object-position:48% 28% !important;
+  transform:translate(2%,2%);
+  filter:saturate(.78) contrast(1.04) brightness(.82) !important;
+  -webkit-mask-image:radial-gradient(ellipse 75% 88% at 52% 46%,#000 0 43%,rgba(0,0,0,.96) 55%,rgba(0,0,0,.62) 69%,transparent 84%) !important;
+  mask-image:radial-gradient(ellipse 75% 88% at 52% 46%,#000 0 43%,rgba(0,0,0,.96) 55%,rgba(0,0,0,.62) 69%,transparent 84%) !important;
+}
+.scene-egor::after {
+  content:"";
+  position:absolute;
+  z-index:15;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(90deg,rgba(4,6,10,.08) 0 34%,transparent 54%,rgba(4,6,10,.2) 100%);
+}
+.mode-dialogue .story-panel { z-index:30; }
+
+/* Ordinary Koshchey remains a small animal in the room. The speaking beat gets a separate shot. */
+.home-cat-wrap.ordinary { left:46% !important; width:min(16vw,230px) !important; bottom:3.5% !important; }
+.home-cat-wrap.speaking { opacity:0 !important; }
+.koshchey-reveal-shot {
+  position:absolute;
+  z-index:18;
+  left:43%;
+  bottom:-6%;
+  width:min(31vw,520px);
+  height:83%;
+  object-fit:contain;
+  object-position:center bottom;
+  pointer-events:none;
+  filter:drop-shadow(0 28px 40px rgba(0,0,0,.52));
+}
+.scene-home.koshchey-reveal::after {
+  content:"";
+  position:absolute;
+  z-index:16;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(circle at 55% 49%,rgba(80,154,83,.08),transparent 22%);
+}
+
+/* Reasoning canvas: richer physical desk, no giant empty museum floor. */
+.desk-canvas {
+  background:
+    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px) 0 0/72px 72px,
+    linear-gradient(rgba(255,255,255,.014) 1px,transparent 1px) 0 0/72px 72px,
+    radial-gradient(circle at 50% 45%,rgba(143,80,58,.16),transparent 36%),
+    linear-gradient(115deg,#36251f,#211719 48%,#171115) !important;
+}
+.desk-canvas::before {
+  content:"";
+  position:absolute;
+  z-index:1;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(105deg,transparent 0 7%,rgba(255,236,206,.025) 7.2% 7.5%,transparent 7.7% 68%,rgba(255,236,206,.02) 68.2% 68.5%,transparent 68.7%),
+    radial-gradient(ellipse at 12% 89%,rgba(0,0,0,.18),transparent 24%),
+    radial-gradient(ellipse at 88% 12%,rgba(0,0,0,.17),transparent 25%);
+}
+.desk-question { box-shadow:0 10px 20px rgba(0,0,0,.26),0 0 0 1px rgba(67,45,37,.12) !important; }
+.desk-card { box-shadow:0 10px 20px rgba(0,0,0,.3),0 0 0 1px rgba(67,45,37,.12) !important; }
+.desk-card::after {
+  content:"";
+  position:absolute;
+  width:54px;
+  height:14px;
+  left:50%;
+  top:-8px;
+  transform:translateX(-50%) rotate(-2deg);
+  background:rgba(205,185,151,.48);
+  box-shadow:0 1px 2px rgba(0,0,0,.12);
+}
+.card-symbol::after { transform:translateX(-50%) rotate(2deg); }
+.card-photo::after { transform:translateX(-50%) rotate(1deg); }
+.card-echo::after { background:rgba(185,187,193,.34); }
+
+/* Fix the bottom reasoning strip: no hidden auto-grid rows or tiny scrollbar. */
+.desk-reasoning {
+  position:relative !important;
+  display:flex !important;
+  align-items:flex-start !important;
+  gap:18px !important;
+  padding:16px 20px !important;
+  overflow:hidden !important;
+}
+.reason-title { width:210px; flex:0 0 210px; font-size:16px !important; }
+.reason-results {
+  width:320px;
+  flex:0 0 320px;
+  height:138px;
+  margin:0 !important;
+  overflow:auto !important;
+  display:grid !important;
+  gap:7px !important;
+}
+.reason-results article { padding:9px 11px !important; }
+.reason-results p { font-size:11px !important; }
+.reason-actions {
+  flex:1 1 auto;
+  min-width:0;
+  margin:0 !important;
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(190px,1fr)) !important;
+  gap:8px !important;
+}
+.reason-actions button { min-height:58px !important; }
+.form-thought {
+  flex:0 0 300px;
+  width:300px !important;
+  margin:0 !important;
+  min-height:62px !important;
+}
+.desk-reasoning > small {
+  position:absolute;
+  right:20px;
+  top:88px;
+  width:300px;
+  margin:0 !important;
+}
+
+@media (max-width:1450px) {
+  .menu-katya .katya-cutout image { transform:scale(1.34); }
+  .character-stage.right .katya-cutout image,
+  .home-character .katya-cutout image,
+  .ending-katya .katya-cutout image { transform:scale(1.42); }
+  .home-cat-wrap.ordinary { left:43% !important; width:175px !important; }
+  .koshchey-reveal-shot { left:41%; width:360px; height:80%; }
+  .egor-frame { right:-1% !important; width:min(48vw,620px) !important; }
+  .reason-title { width:155px; flex-basis:155px; font-size:14px !important; }
+  .reason-results { width:245px; flex-basis:245px; height:116px; }
+  .reason-actions { grid-template-columns:1fr !important; }
+  .reason-actions button { min-height:48px !important; }
+  .form-thought { flex-basis:250px; width:250px !important; }
+  .desk-reasoning > small { width:250px; top:76px; font-size:9px; }
+}

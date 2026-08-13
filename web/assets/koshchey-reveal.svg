@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" role="img" aria-labelledby="title desc">
+<title id="title">Кощей — первый разговор</title><desc id="desc">Крупный трёхчетвертной портрет чёрного кота с зелёными глазами в тёплом комнатном свете</desc>
+<defs>
+  <linearGradient id="fur" x1=".1" y1=".05" x2=".9" y2=".95"><stop stop-color="#4a4e53"/><stop offset=".18" stop-color="#24272c"/><stop offset=".5" stop-color="#101217"/><stop offset=".82" stop-color="#05070a"/><stop offset="1" stop-color="#010203"/></linearGradient>
+  <radialGradient id="rim" cx="31%" cy="25%" r="68%"><stop stop-color="#b48662" stop-opacity=".34"/><stop offset=".38" stop-color="#6f5b55" stop-opacity=".12"/><stop offset="1" stop-opacity="0"/></radialGradient>
+  <radialGradient id="eye" cx="45%" cy="40%" r="60%"><stop stop-color="#efffdc"/><stop offset=".2" stop-color="#9cf47d"/><stop offset=".58" stop-color="#4bb85c"/><stop offset="1" stop-color="#17331d"/></radialGradient>
+  <filter id="furNoise" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="3" seed="17" result="noise"/><feColorMatrix in="noise" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 .16 0" result="grain"/><feBlend in="SourceGraphic" in2="grain" mode="soft-light"/></filter>
+  <filter id="glow" x="-120%" y="-120%" width="340%" height="340%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset=".68" stop-color="white"/><stop offset="1" stop-color="black"/></linearGradient>
+  <mask id="lowerFade"><rect width="900" height="900" fill="url(#fade)"/></mask>
+</defs>
+<g mask="url(#lowerFade)" filter="url(#furNoise)">
+  <!-- shoulder mass -->
+  <path d="M185 900c20-188 82-313 190-375 101-58 243-49 335 34 93 84 132 198 153 341z" fill="url(#fur)"/>
+  <!-- neck -->
+  <path d="M314 460c16 105 57 177 130 207 71 24 136-11 170-92 21-49 31-104 27-165z" fill="#111419"/>
+  <!-- ears -->
+  <path d="M258 245c-18-105 9-184 86-238 34 65 49 132 46 201z" fill="#080a0d"/>
+  <path d="M562 195c36-88 91-147 164-178 7 91-13 169-60 235z" fill="#07090c"/>
+  <path d="M294 209c-8-67 7-120 45-162 22 51 31 101 27 150z" fill="#342c32" opacity=".45"/>
+  <path d="M600 190c25-58 59-101 103-127-1 58-16 111-46 158z" fill="#302930" opacity=".4"/>
+  <!-- head -->
+  <path d="M253 235c46-89 133-137 238-129 112 8 193 77 211 181 17 98-20 196-97 258-69 55-166 73-249 38-91-38-147-125-142-222 2-47 15-88 39-126z" fill="url(#fur)"/>
+  <path d="M243 242c55-70 120-104 196-106-76 39-123 104-142 196-13 63-4 127 25 193-82-53-122-128-108-221 4-24 14-45 29-62z" fill="url(#rim)" opacity=".75"/>
+  <!-- cheek planes -->
+  <path d="M286 368c48 54 103 78 166 74-30 83-85 126-166 110-45-33-59-94-40-150z" fill="#171a1e" opacity=".82"/>
+  <path d="M451 438c67 10 127-11 179-64 30 64 15 126-42 174-76 22-124-14-137-110z" fill="#0b0e12" opacity=".86"/>
+  <!-- muzzle -->
+  <path d="M338 461c39 39 82 58 131 57 49-1 91-19 126-55-10 79-53 120-127 122-73 1-117-40-130-124z" fill="#202329" opacity=".85"/>
+  <path d="M435 503c20-15 42-14 63 2-9 19-20 28-32 28-13 0-23-10-31-30z" fill="#6c5f67"/>
+  <path d="M466 532c-6 22-22 36-47 43m47-43c8 21 24 34 49 39" stroke="#b1abb0" stroke-opacity=".48" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- eyes -->
+  <path d="M304 360c46-44 99-43 149 5-47 52-99 51-149-5z" fill="#020304"/>
+  <path d="M502 357c49-36 100-29 144 22-53 44-103 37-144-22z" fill="#020304"/>
+  <path d="M329 362c29-25 61-24 94 3-31 31-63 30-94-3z" fill="url(#eye)" filter="url(#glow)"/>
+  <path d="M530 363c28-20 58-16 88 15-34 25-63 20-88-15z" fill="url(#eye)" filter="url(#glow)"/>
+  <path d="M376 342v46M574 348l-5 45" stroke="#071109" stroke-width="9" stroke-linecap="round"/>
+  <circle cx="351" cy="351" r="6" fill="#f5ffe9" opacity=".72"/><circle cx="551" cy="356" r="5" fill="#f5ffe9" opacity=".65"/>
+  <!-- fur strokes -->
+  <g fill="none" stroke="#a5a9ae" stroke-linecap="round">
+    <path d="M273 283c42-47 95-74 160-81M311 243c44-33 91-48 141-44M526 215c52 12 94 37 126 76M278 425c35-14 67-18 97-11M562 420c33-10 63-8 91 8M334 596c37 23 78 34 124 32M520 611c31-9 58-24 82-45" stroke-opacity=".13" stroke-width="7"/>
+    <path d="M276 318l-54-22M287 336l-72-3M296 352l-69 21M626 318l64-28M619 338l78-1M607 357l72 25" stroke-opacity=".18" stroke-width="3"/>
+  </g>
+  <!-- whiskers -->
+  <g fill="none" stroke="#d0d0d2" stroke-opacity=".32" stroke-width="2.5" stroke-linecap="round"><path d="M387 512L129 458M390 530l-277 11M399 548l-242 75M541 508l247-73M538 529l271-2M530 548l238 80"/></g>
+</g>
+</svg>

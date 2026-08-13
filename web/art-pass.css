@@ -1,203 +1,145 @@
-/* Production environment art layer. Gameplay/UI remains in styles.css. */
+/* Production V3 art direction: crisp scene-specific SVG environments. */
 .production-art {
   background-image: var(--production-art) !important;
   background-size: cover !important;
   background-repeat: no-repeat !important;
+  background-position: center center !important;
   isolation: isolate;
+  filter: none !important;
 }
+.production-art::after { content:""; position:absolute; inset:0; z-index:1; pointer-events:none; }
+.production-keyart::after { background:linear-gradient(90deg,rgba(4,5,8,.88) 0 27%,rgba(4,5,8,.47) 44%,rgba(4,5,8,.08) 68%,rgba(4,5,8,.04)); }
+.production-studio::after { background:linear-gradient(90deg,rgba(4,5,8,.26),transparent 48%,rgba(4,5,8,.08)); }
+.production-walk::after,.production-cordon::after,.production-egor::after { background:linear-gradient(180deg,rgba(3,5,9,.06),transparent 60%,rgba(3,5,9,.2)); }
+.production-home::after,.production-ending::after { background:linear-gradient(90deg,rgba(4,4,7,.12),transparent 54%,rgba(4,4,7,.06)); }
+.production-echo::after { background:radial-gradient(circle at 54% 47%,transparent 0 30%,rgba(53,11,28,.16) 62%,rgba(4,3,7,.22) 100%); }
 
-.production-art::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
+.katya-cutout { background:none !important; overflow:visible; filter:drop-shadow(-18px 26px 34px rgba(0,0,0,.48)) !important; }
+.character-stage.right::before,.character-stage.right::after,.home-character::before,.home-character::after,.ending-katya::before,.ending-katya::after,.menu-katya::after,.katya-side::before,.katya-side::after { display:none !important; }
+.menu-katya,.character-stage.right,.home-character,.ending-katya,.katya-side { overflow:hidden; }
+.menu-katya .katya-cutout { right:2% !important; bottom:-31% !important; width:min(49vw,820px) !important; height:127% !important; }
+.character-stage.right .katya-cutout { right:1.5% !important; bottom:-31% !important; width:min(45vw,730px) !important; height:124% !important; }
+.home-character .katya-cutout { right:1% !important; bottom:-31% !important; width:min(44vw,710px) !important; height:124% !important; }
+.ending-katya .katya-cutout { right:1.5% !important; bottom:-31% !important; width:min(45vw,730px) !important; height:125% !important; }
+.katya-side .katya-cutout { left:0 !important; bottom:-31% !important; width:min(43vw,690px) !important; height:123% !important; transform:scaleX(-1); }
+.echo-katya .katya-cutout { right:1.5% !important; bottom:-31% !important; width:min(43vw,680px) !important; height:124% !important; opacity:.78 !important; filter:grayscale(.28) contrast(1.08) drop-shadow(-16px 22px 28px rgba(0,0,0,.46)) !important; }
 
-/* Katerina remains the exact locked reference. main.js masks pixels outside the
-   silhouette; these rules also prevent the old CSS background copy. */
-.katya-cutout {
-  background: none !important;
-  overflow: visible;
-  z-index: 1;
-}
+.keyart-glass { display:none !important; }
+.menu-cat { right:35% !important; bottom:4.5% !important; width:min(17vw,275px) !important; }
+.menu-koshchey { opacity:.94 !important; filter:brightness(.84) drop-shadow(0 20px 24px rgba(0,0,0,.52)) !important; }
+.home-cat-wrap { left:45.5% !important; bottom:4.5% !important; width:min(24vw,350px) !important; }
+.home-cat-wrap.ordinary .home-koshchey { filter:brightness(.82) saturate(.86) drop-shadow(0 20px 24px rgba(0,0,0,.48)) !important; }
+.home-cat-wrap.speaking .home-koshchey { filter:brightness(.96) saturate(1.02) drop-shadow(0 0 14px rgba(91,210,101,.16)) drop-shadow(0 22px 26px rgba(0,0,0,.5)) !important; transform:translateY(-5px) scale(1.02) !important; }
+.ending-cat { right:34% !important; bottom:3.5% !important; width:min(19vw,300px) !important; }
+.ending-koshchey { filter:brightness(.85) drop-shadow(0 20px 24px rgba(0,0,0,.48)) !important; }
+.desk-cat { width:160px !important; opacity:.9 !important; }
+.desk-koshchey { filter:brightness(.84) drop-shadow(0 12px 16px rgba(0,0,0,.4)) !important; }
 
-/* The canonical source contains baked dark rectangular artifacts close to the
-   silhouette. Do not repaint Katerina: stage her against a cinematic black
-   vignette so those source pixels disappear into the lighting. */
-.character-stage.right::before,
-.home-character::before,
-.ending-katya::before {
-  content:"";
-  position:absolute;
-  z-index:0;
-  top:0;
-  right:0;
-  width:42%;
-  height:100%;
-  pointer-events:none;
-  background:linear-gradient(90deg,transparent 0%,rgba(3,4,6,.7) 31%,rgba(2,3,5,.96) 67%,#020305 100%);
-  filter:blur(.2px);
-}
-.katya-side::before {
-  content:"";
-  position:absolute;
-  z-index:0;
-  top:0;
-  left:0;
-  width:37%;
-  height:100%;
-  pointer-events:none;
-  background:linear-gradient(90deg,#020305 0%,rgba(2,3,5,.95) 42%,rgba(3,4,6,.54) 74%,transparent 100%);
-}
+.story-panel { background:linear-gradient(135deg,rgba(7,8,12,.88),rgba(7,8,12,.73)) !important; backdrop-filter:blur(8px) !important; border-color:rgba(255,255,255,.14) !important; }
+.top-chrome { backdrop-filter:blur(6px) !important; }
+.goal-chip { backdrop-filter:blur(6px) !important; }
+.mode-echo::after { opacity:.5; }
+.echo-ring { box-shadow:0 0 30px rgba(171,30,65,.08) !important; }
+.echo-fragment.selected { filter:drop-shadow(0 0 14px rgba(221,70,106,.28)) !important; }
 
-/* The source also has a damaged lower-body patch. Rather than invent anatomy,
-   frame Katerina as a cinematic half-body sprite and let the lower area fall
-   naturally into foreground shadow. */
-.menu-katya::after,
-.character-stage.right::after,
-.home-character::after,
-.ending-katya::after {
-  content:"";
-  position:absolute;
-  z-index:2;
-  right:0;
-  bottom:0;
-  width:47%;
-  height:48%;
-  pointer-events:none;
-  background:linear-gradient(180deg,transparent 0%,rgba(2,3,5,.44) 35%,rgba(2,3,5,.94) 72%,#020305 100%);
-}
-.katya-side::after {
-  content:"";
-  position:absolute;
-  z-index:2;
-  left:0;
-  bottom:0;
-  width:38%;
-  height:45%;
-  pointer-events:none;
-  background:linear-gradient(180deg,transparent 0%,rgba(2,3,5,.35) 38%,rgba(2,3,5,.92) 78%,#020305 100%);
-}
+.micro-beat { display:grid; gap:5px; margin-top:14px; padding:12px 14px; border-left:2px solid rgba(213,165,111,.56); background:rgba(184,126,65,.08); }
+.micro-beat b { color:#dfc5a5; font-size:10px; text-transform:uppercase; letter-spacing:.11em; }
+.micro-beat span { color:#c4b7bc; font:13px/1.45 Georgia,"Times New Roman",serif; }
 
-/* The old geometric glass rectangle made the title screen feel like a mockup. */
-.keyart-glass { display: none !important; }
-.scene-menu .environment::before { opacity: .46; }
-
-.production-keyart {
-  background-position: center 48% !important;
-  filter: saturate(.98) contrast(1.04) brightness(.98);
+/* Reasoning workspace V3: one physical desk, not dashboard + fake strings. */
+.desk-overlay { padding:2.2vh 2vw !important; background:rgba(2,3,6,.9) !important; backdrop-filter:none !important; }
+.desk-workspace {
+  width:96vw !important;
+  height:95vh !important;
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  grid-template-rows:82px minmax(0,1fr) 188px !important;
+  border-radius:24px !important;
+  background:#151012 !important;
 }
-.production-keyart::after {
+.desk-workspace > header { grid-column:1 !important; padding:16px 24px !important; background:#0d0a0d !important; }
+.desk-canvas {
+  grid-row:2 !important;
+  position:relative !important;
+  overflow:hidden !important;
   background:
-    linear-gradient(90deg, rgba(4,5,8,.78) 0 24%, rgba(4,5,8,.32) 47%, rgba(4,5,8,.02) 74%),
-    linear-gradient(180deg, rgba(3,4,7,.04), transparent 58%, rgba(3,4,7,.36)),
-    radial-gradient(circle at 70% 39%, rgba(151,54,80,.2), transparent 31%),
-    radial-gradient(circle at 31% 70%, rgba(214,153,91,.09), transparent 24%);
+    radial-gradient(circle at 50% 48%,rgba(126,74,54,.13),transparent 34%),
+    linear-gradient(115deg,#31231f,#211819 48%,#181216) !important;
 }
+.desk-canvas::after { box-shadow:inset 0 0 70px rgba(0,0,0,.22) !important; }
+.desk-question {
+  left:50% !important;
+  top:8% !important;
+  transform:translateX(-50%) rotate(-.5deg) !important;
+  width:300px !important;
+  min-height:72px !important;
+  padding:15px 18px !important;
+  z-index:6 !important;
+  text-align:center;
+  background:#d7c7ad !important;
+  font-size:17px !important;
+}
+.desk-card {
+  width:215px !important;
+  min-height:112px !important;
+  padding:16px !important;
+  transform:none !important;
+  border-radius:4px;
+  box-shadow:0 12px 24px rgba(0,0,0,.28) !important;
+  z-index:5 !important;
+}
+.card-sketch { left:7% !important; top:28% !important; transform:rotate(-2deg) !important; }
+.card-symbol { left:50% !important; top:28% !important; transform:translateX(-50%) rotate(1deg) !important; }
+.card-tattoo { right:7% !important; left:auto !important; top:28% !important; bottom:auto !important; transform:rotate(2deg) !important; }
+.card-photo { left:19% !important; bottom:8% !important; top:auto !important; transform:rotate(1deg) !important; }
+.card-echo { left:auto !important; right:19% !important; top:auto !important; bottom:8% !important; width:205px !important; min-height:102px !important; transform:rotate(-1deg) !important; }
+.connection-line { display:none !important; }
+.desk-link-layer { position:absolute; inset:0; width:100%; height:100%; z-index:4; overflow:visible; pointer-events:none; }
+.desk-link-path { fill:none; stroke:#c94669; stroke-width:3; vector-effect:non-scaling-stroke; opacity:.9; }
+.desk-link-anchor { fill:#e6b3c0; stroke:#6f1f3a; stroke-width:2; vector-effect:non-scaling-stroke; }
+.desk-cat { left:auto !important; right:1.5% !important; bottom:-2% !important; width:145px !important; z-index:7 !important; }
+.desk-reasoning {
+  grid-row:3 !important;
+  display:grid !important;
+  grid-template-columns:minmax(260px,1.2fr) minmax(520px,2.4fr) minmax(260px,1fr) !important;
+  gap:16px !important;
+  align-items:stretch !important;
+  overflow:hidden !important;
+  padding:15px 20px !important;
+  border-left:0 !important;
+  border-top:1px solid rgba(255,255,255,.08) !important;
+  background:#0d0b0e !important;
+}
+.reason-title { grid-column:1; align-self:start; font-size:17px !important; }
+.reason-results { grid-column:1; margin-top:36px !important; max-height:112px; overflow:auto; }
+.reason-actions { grid-column:2; grid-row:1; margin:0 !important; display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:9px !important; align-content:start; }
+.reason-actions button { min-height:58px !important; padding:11px 13px !important; border-radius:12px !important; font-size:11px !important; }
+.form-thought { grid-column:3; grid-row:1; margin:0 !important; min-height:62px !important; align-self:start; }
+.desk-reasoning > small { grid-column:3; grid-row:1; margin:75px 0 0 !important; align-self:start; }
 
-.production-studio {
-  background-position: 41% 48% !important;
-  filter: saturate(.88) contrast(1.04) brightness(.84);
-}
-.production-studio::after {
-  background:
-    linear-gradient(90deg, rgba(4,5,8,.52), rgba(4,5,8,.04) 48%, rgba(4,5,8,.18)),
-    radial-gradient(circle at 20% 72%, rgba(204,127,64,.17), transparent 27%),
-    linear-gradient(180deg, rgba(0,0,0,.03), transparent 57%, rgba(0,0,0,.34));
-}
-
-.production-home,
-.production-ending {
-  background-position: center 48% !important;
-  filter: saturate(.92) contrast(1.02) brightness(.9);
-}
-.production-home::after,
-.production-ending::after {
-  background:
-    linear-gradient(90deg, rgba(4,5,8,.3), rgba(4,5,8,.01) 50%, rgba(4,5,8,.12)),
-    radial-gradient(circle at 21% 75%, rgba(227,149,76,.18), transparent 28%),
-    linear-gradient(180deg, rgba(0,0,0,.01), transparent 58%, rgba(0,0,0,.27));
-}
-
-.production-walk,
-.production-cordon,
-.production-egor {
-  background-position: center 50% !important;
-  filter: saturate(.82) contrast(1.07) brightness(.79);
-}
-.production-walk::after,
-.production-cordon::after,
-.production-egor::after {
-  background:
-    linear-gradient(90deg, rgba(3,4,8,.35), transparent 46%, rgba(3,4,8,.16)),
-    radial-gradient(circle at 18% 26%, rgba(71,96,146,.18), transparent 31%),
-    linear-gradient(180deg, rgba(0,0,0,.01), transparent 57%, rgba(0,0,0,.34));
-  box-shadow: inset 0 0 130px rgba(0,0,0,.28);
-}
-.production-cordon::after {
-  background:
-    radial-gradient(circle at 48% 73%, rgba(177,37,73,.18), transparent 24%),
-    linear-gradient(90deg, rgba(3,4,8,.28), transparent 48%, rgba(3,4,8,.14)),
-    linear-gradient(180deg, rgba(0,0,0,.01), transparent 56%, rgba(0,0,0,.34));
-}
-
-.production-echo {
-  background-position: center 45% !important;
-  filter: grayscale(.42) saturate(.68) contrast(1.16) brightness(.62);
-}
-.production-echo::after {
-  background:
-    linear-gradient(90deg, rgba(9,2,7,.62), rgba(9,2,7,.04) 48%, rgba(9,2,7,.28)),
-    radial-gradient(circle at 63% 47%, transparent 0 24%, rgba(187,34,72,.12) 42%, transparent 62%),
-    repeating-linear-gradient(105deg, transparent 0 42px, rgba(208,53,91,.025) 43px 44px);
-  box-shadow: inset 0 0 180px rgba(0,0,0,.55);
-  animation: echoBreath 4.6s ease-in-out infinite;
-}
-
-.micro-beat {
-  display:grid;
-  gap:5px;
-  margin-top:14px;
-  padding:11px 13px;
-  border-left:2px solid rgba(213,165,111,.52);
-  background:rgba(184,126,65,.07);
-}
-.micro-beat b {
-  color:#d9bd9c;
-  font-size:10px;
-  text-transform:uppercase;
-  letter-spacing:.11em;
-}
-.micro-beat span {
-  color:#afa3a9;
-  font:13px/1.42 Georgia,"Times New Roman",serif;
-}
-
-@keyframes echoBreath {
-  0%,100% { opacity: .66; }
-  50% { opacity: .92; }
-}
-
-@media (max-width: 1450px) {
-  .production-keyart { background-position: 44% 48% !important; }
-  .production-studio { background-position: 45% 48% !important; }
-  .production-home,
-  .production-ending { background-position: 45% 48% !important; }
-  .production-walk,
-  .production-cordon,
-  .production-egor { background-position: 47% 50% !important; }
+@media (max-width:1450px) {
+  .menu-katya .katya-cutout { right:-2% !important; bottom:-32% !important; width:min(54vw,700px) !important; }
+  .character-stage.right .katya-cutout,.home-character .katya-cutout,.ending-katya .katya-cutout { right:-4% !important; bottom:-33% !important; width:min(50vw,630px) !important; }
+  .katya-side .katya-cutout { left:-4% !important; bottom:-33% !important; width:min(47vw,590px) !important; }
+  .menu-cat { right:34% !important; width:210px !important; }
+  .home-cat-wrap { left:43% !important; width:255px !important; }
+  .ending-cat { right:31% !important; width:225px !important; }
   .micro-beat { margin-top:9px; padding:8px 10px; }
   .micro-beat span { font-size:11px; }
-  .character-stage.right::before,
-  .home-character::before,
-  .ending-katya::before { width:46%; }
-  .menu-katya::after,
-  .character-stage.right::after,
-  .home-character::after,
-  .ending-katya::after { width:51%; height:50%; }
+  .desk-workspace { grid-template-rows:70px minmax(0,1fr) 166px !important; }
+  .desk-card { width:175px !important; min-height:94px !important; padding:12px !important; }
+  .desk-card p { font-size:11px !important; }
+  .desk-question { width:250px !important; min-height:62px !important; font-size:15px !important; }
+  .desk-reasoning { grid-template-columns:220px minmax(420px,2fr) 230px !important; padding:12px 14px !important; gap:10px !important; }
+  .reason-actions button { min-height:52px !important; font-size:10px !important; }
+  .form-thought { min-height:55px !important; font-size:11px !important; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .production-echo::after { animation: none; }
+@media (max-width:1100px) {
+  .menu-katya .katya-cutout { right:-10% !important; width:60vw !important; }
+  .character-stage.right .katya-cutout,.home-character .katya-cutout { right:-12% !important; width:57vw !important; opacity:.96 !important; }
+  .menu-cat { right:31% !important; }
+  .home-cat-wrap { left:39% !important; }
 }
+
+@media (prefers-reduced-motion: reduce) { .production-echo::after { animation:none; } }
