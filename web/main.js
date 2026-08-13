@@ -9,6 +9,7 @@ const icons = {
   sketch: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="m7 16 3-7 3 5 2-8 2 10"/></svg>`,
   seal: `<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22"/><path d="M32 7v50M9 32h46M18 18l28 28M46 18 18 46"/><circle cx="32" cy="32" r="6"/></svg>`,
   table: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h18v10H3zM6 18v3M18 18v3"/><path d="M7 5h10M9 3h6"/></svg>`,
+  cup: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h12v9a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M17 10h2a3 3 0 0 1 0 6h-2M8 3c-2 2 2 2 0 4M12 3c-2 2 2 2 0 4"/></svg>`,
   arrow: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 7l5 5-5 5"/></svg>`,
   close: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>`
 };
@@ -47,7 +48,10 @@ function sceneLabel(scene) {
 }
 
 function katya(extra = "") {
-  return `<div class="katya-cutout ${extra}" role="img" aria-label="Катерина"></div>`;
+  const clip = "polygon(42% 2.5%,57.6% 2.5%,61% 5.3%,61.5% 14%,66.9% 17.3%,68.8% 32.5%,71% 45.6%,69% 49%,65.7% 48.3%,64.6% 93.4%,61% 97%,53.7% 97%,50.8% 95%,50.8% 49.5%,48.3% 49.2%,46.6% 49.5%,44.4% 95%,41.5% 97%,32.2% 97%,28.8% 94.7%,32.2% 48.3%,29.3% 46.9%,31.9% 44.9%,33.2% 32.5%,33.2% 18.5%,38.6% 16%,40% 13.7%,39.7% 5.9%)";
+  return `<svg class="katya-cutout ${extra}" viewBox="0 0 1024 1536" role="img" aria-label="Катерина" preserveAspectRatio="xMidYMax meet">
+    <image href="./assets/katerina.webp" x="0" y="0" width="1024" height="1536" preserveAspectRatio="xMidYMax meet" style="clip-path:${clip}"/>
+  </svg>`;
 }
 
 function koshchey(extra = "") {
@@ -87,10 +91,14 @@ function storyActions(scene) {
 function storyPanel(scene, options = {}) {
   const actions = storyActions(scene);
   const dialogue = options.dialogue || "";
+  const homeBeat = scene.id === "home" && state.flags.home_settled && !state.flags.cat_spoke
+    ? `<div class="micro-beat"><b>Несколько обычных минут</b><span>Кощей хрустит кормом. Чайник шумит на кухне. Дрожь в руках почти проходит — и только тогда под ключицей снова становится горячо.</span></div>`
+    : "";
   return `<section class="story-panel ${options.wide ? "wide" : ""}">
     <div class="story-overline">${sceneLabel(scene)}</div>
     <h2>${scene.title}</h2>
     <div class="story-copy">${scene.copy.map((paragraph) => `<p>${paragraph}</p>`).join("")}</div>
+    ${homeBeat}
     ${dialogue}
     ${actions.length ? `<div class="story-actions">${actions.map(actionButton).join("")}</div>` : ""}
   </section>`;
@@ -103,8 +111,11 @@ function contextualGoal(scene) {
   if (scene.id === "cordon") {
     return `<div class="goal-chip warning">${icons.seal}<div><b>Ты остаёшься за лентой</b><span>Ничего не трогай — просто посмотри на знакомую форму</span></div></div>`;
   }
+  if (scene.id === "home" && !state.flags.home_settled) {
+    return `<div class="goal-chip">${icons.cup}<div><b>Вернуть вечеру обычный ритм</b><span>Сначала Кощей, корм и чайник. Разбираться со странностями можно через минуту.</span></div></div>`;
+  }
   if (scene.id === "home" && state.flags.cat_exchanged && !state.flags.sofia_replied) {
-    return `<button class="goal-chip interactive" data-action="phone.open">${icons.phone}<div><b>Новое сообщение от Софьи</b><span>Телефон — полноценный игровой объект. Открыть сообщение</span></div></button>`;
+    return `<button class="goal-chip interactive" data-action="phone.open">${icons.phone}<div><b>Новое сообщение от Софьи</b><span>Она прислала фотографию из того самого двора</span></div></button>`;
   }
   if (scene.id === "home" && state.flags.sofia_replied && !state.flags.thought_confirmed) {
     return `<button class="goal-chip interactive desk" data-action="desk.open">${icons.table}<div><b>Разобраться, что вообще произошло</b><span>Разложить эскиз, фото и свои заметки на рабочем столе</span></div></button>`;
@@ -112,7 +123,7 @@ function contextualGoal(scene) {
   return "";
 }
 
-function sceneEnvironment(scene) {
+function sceneEnvironment() {
   return `<div class="environment" aria-hidden="true"></div>`;
 }
 
@@ -156,7 +167,7 @@ function catDialogue() {
 
 function renderMenu(scene) {
   return `<main class="screen menu-screen scene-menu">
-    ${sceneEnvironment(scene)}
+    ${sceneEnvironment()}
     <div class="keyart-glass" aria-hidden="true"></div>
     <div class="menu-katya">${katya("menu-pose")}</div>
     <div class="menu-cat">${koshchey("menu-koshchey")}</div>
@@ -173,7 +184,7 @@ function renderMenu(scene) {
 
 function renderStudio(scene) {
   return `<main class="screen scene-studio">
-    ${sceneEnvironment(scene)}${studioProps()}
+    ${sceneEnvironment()}${studioProps()}
     ${topChrome(scene)}
     <div class="character-stage right">${katya("story-pose")}</div>
     ${contextualGoal(scene)}
@@ -183,7 +194,7 @@ function renderStudio(scene) {
 
 function renderWalk(scene) {
   return `<main class="screen scene-${scene.id}">
-    ${sceneEnvironment(scene)}${streetProps(scene)}
+    ${sceneEnvironment()}${streetProps(scene)}
     ${topChrome(scene)}
     <div class="character-stage right subdued">${katya("walk-pose")}</div>
     ${contextualGoal(scene)}
@@ -193,7 +204,7 @@ function renderWalk(scene) {
 
 function renderEcho(scene) {
   return `<main class="screen scene-echo mode-echo">
-    ${sceneEnvironment(scene)}${echoVisual()}
+    ${sceneEnvironment()}${echoVisual()}
     ${topChrome(scene)}
     <div class="character-stage echo-katya">${katya("echo-pose")}</div>
     ${storyPanel(scene, { wide: true })}
@@ -202,7 +213,7 @@ function renderEcho(scene) {
 
 function renderEgor(scene) {
   return `<main class="screen scene-egor mode-dialogue">
-    ${sceneEnvironment(scene)}
+    ${sceneEnvironment()}
     ${topChrome(scene)}
     <div class="dialogue-stage">
       <div class="katya-side">${katya("dialogue-pose")}</div>
@@ -215,7 +226,7 @@ function renderEgor(scene) {
 function renderHome(scene) {
   const speaking = state.flags.cat_spoke ? "speaking" : "ordinary";
   return `<main class="screen scene-home mode-home">
-    ${sceneEnvironment(scene)}
+    ${sceneEnvironment()}
     ${topChrome(scene)}
     <div class="home-character">${katya("home-pose")}</div>
     <div class="home-cat-wrap ${speaking}">${koshchey("home-koshchey")}</div>
@@ -226,7 +237,7 @@ function renderHome(scene) {
 
 function renderEnding(scene) {
   return `<main class="screen scene-ending">
-    ${sceneEnvironment(scene)}
+    ${sceneEnvironment()}
     <div class="ending-katya">${katya("ending-pose")}</div>
     <div class="ending-cat">${koshchey("ending-koshchey")}</div>
     <section class="ending-copy">
@@ -246,8 +257,8 @@ function phoneOverlay() {
     <button class="overlay-backdrop" data-action="phone.close" aria-label="Закрыть телефон"></button>
     <section class="phone-context">
       <div class="phone-context-icon">${icons.phone}</div>
-      <h3>Софья не просит тебя лезть в дело</h3>
-      <p>Она просто узнала на публичной фотографии рисунок, который постоянно видела в твоих эскизах.</p>
+      <h3>Фото из того самого двора</h3>
+      <p>Софья узнала в странной геометрии мотив, который годами видела в Катериных эскизах.</p>
     </section>
     <section class="phone-device">
       <div class="phone-topbar"><span>23:41</span><i></i><b>LTE</b></div>
@@ -328,7 +339,7 @@ function renderScene(scene) {
   if (scene.id === "egor") return renderEgor(scene);
   if (scene.id === "home") return renderHome(scene);
   if (scene.id === "ending") return renderEnding(scene);
-  return `<main class="screen scene-${scene.id}">${sceneEnvironment(scene)}${topChrome(scene)}${storyPanel(scene)}</main>`;
+  return `<main class="screen scene-${scene.id}">${sceneEnvironment()}${topChrome(scene)}${storyPanel(scene)}</main>`;
 }
 
 function bindEvents() {
