@@ -163,6 +163,16 @@ async function act(cdp, sessionId, id, payload = {}) {
 
 async function reset(cdp, sessionId) { return evaluate(cdp, sessionId, "window.__NOVELLA__.reset()"); }
 
+async function completeApartment(cdp, sessionId, reply = "sarcastic") {
+  await act(cdp, sessionId, "phone.open");
+  await act(cdp, sessionId, `phone.reply.${reply}`);
+  await act(cdp, sessionId, "apartment.inspect_sketch");
+}
+
+async function collectCrimeClues(cdp, sessionId) {
+  for (const clue of ["symbol_ground", "pendant", "drag_marks"]) await act(cdp, sessionId, `inspect.${clue}`);
+}
+
 async function runQa() {
   await mkdir(OUT, { recursive: true });
   const { server, port } = await staticServer();
@@ -193,7 +203,7 @@ async function runQa() {
     await act(cdp, sessionId, "street.touch_seal");
     await act(cdp, sessionId, "scene.go_crime");
     await shot(cdp, sessionId, "03-investigation", 1920, 1080);
-    for (const clue of ["symbol_ground", "pendant", "drag_marks"]) await act(cdp, sessionId, `inspect.${clue}`);
+    await collectCrimeClues(cdp, sessionId);
     await act(cdp, sessionId, "seal.begin");
     for (const node of [2,4,1,5,3]) await act(cdp, sessionId, "seal.node", { node });
     await shot(cdp, sessionId, "04-echo", 1920, 1080);
@@ -211,9 +221,10 @@ async function runQa() {
     await reset(cdp, sessionId);
     await shot(cdp, sessionId, "07-menu-small", 1366, 768);
     await act(cdp, sessionId, "game.start");
+    await completeApartment(cdp, sessionId, "silent");
     await act(cdp, sessionId, "scene.go_street");
     await act(cdp, sessionId, "scene.go_crime");
-    await act(cdp, sessionId, "inspect.symbol_ground");
+    await collectCrimeClues(cdp, sessionId);
     await act(cdp, sessionId, "seal.begin");
     for (const node of [2,4,1,5,3]) await act(cdp, sessionId, "seal.node", { node });
     await act(cdp, sessionId, "scene.meet_egor");

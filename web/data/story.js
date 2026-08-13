@@ -60,7 +60,7 @@ export const SCENES = {
     actions: [
       { id: "phone.open", label: "Открыть сообщение Софьи", kind: "primary" },
       { id: "apartment.inspect_sketch", label: "Осмотреть эскизы на столе", kind: "quiet" },
-      { id: "scene.go_street", label: "Выйти к клубу Void", kind: "danger" }
+      { id: "scene.go_street", label: "Выйти к клубу Void", kind: "danger", requiresFlags: ["sofia_replied", "sketch_inspected"] }
     ]
   },
   street: {
@@ -82,7 +82,7 @@ export const SCENES = {
       "Здесь можно искать глазами. Или рискнуть и позволить печати искать вместо неё."
     ],
     hotspots: ["symbol_ground", "pendant", "drag_marks"],
-    actions: [{ id: "seal.begin", label: "Активировать Печать Следа", kind: "mystic", requires: ["symbol_ground"] }]
+    actions: [{ id: "seal.begin", label: "Активировать Печать Следа", kind: "mystic", requires: ["symbol_ground", "pendant", "drag_marks"] }]
   },
   echo: {
     id: "echo", mode: "echo", location: "Эхо места", time: "—", title: "Чужая память не похожа на воспоминание",
