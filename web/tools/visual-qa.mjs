@@ -218,7 +218,9 @@ async function runQa() {
     await shot(cdp, sessionId, "05-egor-first-contact", 1920, 1080);
     await act(cdp, sessionId, "egor.direct");
     await act(cdp, sessionId, "scene.go_home");
-    await shot(cdp, sessionId, "06-home-before-koshchey", 1920, 1080);
+    await shot(cdp, sessionId, "06-home-ordinary-koshchey", 1920, 1080);
+    await act(cdp, sessionId, "home.feed_cat");
+    await shot(cdp, sessionId, "06b-home-quiet-beat", 1920, 1080);
     await act(cdp, sessionId, "home.check_tattoo");
     await shot(cdp, sessionId, "07-koshchey-speaks", 1920, 1080);
     await act(cdp, sessionId, "koshchey.disbelief");
@@ -244,12 +246,13 @@ async function runQa() {
     await act(cdp, sessionId, "echo.break");
     await act(cdp, sessionId, "egor.guarded");
     await act(cdp, sessionId, "scene.go_home");
+    await act(cdp, sessionId, "home.feed_cat");
     await act(cdp, sessionId, "home.check_tattoo");
     await act(cdp, sessionId, "koshchey.careful");
     await act(cdp, sessionId, "phone.open");
     await shot(cdp, sessionId, "12-phone-small", 1366, 768);
 
-    console.log("visual-qa: completed 12 acceptance screenshots for rebuilt prologue");
+    console.log("visual-qa: completed 13 acceptance screenshots for rebuilt prologue");
   } finally {
     try { if (cdp) await cdp.send("Browser.close"); } catch {}
     try { cdp?.close(); } catch {}
