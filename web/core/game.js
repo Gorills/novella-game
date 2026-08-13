@@ -169,6 +169,10 @@ export function act(sourceState, actionId, payload = {}) {
     addJournal(state, "Катерина не подтвердила незнакомцу ничего лишнего.");
   } else if (actionId === "scene.go_home") {
     go(state, "home");
+  } else if (actionId === "home.feed_cat") {
+    state.flags.home_settled = true;
+    state.stress = Math.max(0, state.stress - 5);
+    addJournal(state, "Катерина насыпала Кощею корм, поставила чайник и несколько минут позволила вечеру снова быть обычным.");
   } else if (actionId === "home.check_tattoo") {
     state.flags.cat_spoke = true;
     addClue(state, "tattoo_response");
