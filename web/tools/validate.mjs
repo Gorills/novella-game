@@ -13,7 +13,7 @@ const required = [
   "assets/egor.webp",
   "assets/koshchey.svg",
   "tools/visual-qa.mjs",
-  "tools/ui-playtest-v2.mjs"
+  "tools/ui-playtest.mjs"
 ];
 
 for (const path of required) {
