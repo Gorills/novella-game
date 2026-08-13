@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" role="img" aria-label="Ночной Северин за окнами тату-студии">
+<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#080b12"/><stop offset=".55" stop-color="#101724"/><stop offset="1" stop-color="#07090d"/></linearGradient>
+  <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#17202b" stop-opacity=".82"/><stop offset="1" stop-color="#080b10" stop-opacity=".96"/></linearGradient>
+  <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#15100f"/><stop offset="1" stop-color="#070707"/></linearGradient>
+  <radialGradient id="warm" cx="70%" cy="39%" r="46%"><stop stop-color="#b06748" stop-opacity=".25"/><stop offset=".52" stop-color="#6d2c31" stop-opacity=".12"/><stop offset="1" stop-opacity="0"/></radialGradient>
+  <radialGradient id="burg" cx="83%" cy="48%" r="32%"><stop stop-color="#7c233c" stop-opacity=".26"/><stop offset="1" stop-opacity="0"/></radialGradient>
+  <pattern id="rain" width="46" height="74" patternUnits="userSpaceOnUse" patternTransform="rotate(12)"><path d="M8 -8V33M31 20v40" stroke="#b8c7d8" stroke-opacity=".13" stroke-width="2"/></pattern>
+</defs>
+<rect width="1920" height="1080" fill="#050609"/>
+<rect x="0" y="0" width="1920" height="690" fill="url(#sky)"/>
+<!-- skyline -->
+<g fill="#0a0e15">
+  <path d="M0 472h118v-198h64v198h74V338h116v134h68V220h83v252h82V295h128v177h87V246h90v226h90V318h142v154h76V198h90v274h72V286h125v186h73V248h104v224h145v218H0z"/>
+</g>
+<g fill="#d6b982" opacity=".32">
+  <rect x="67" y="326" width="14" height="30"/><rect x="130" y="305" width="12" height="24"/><rect x="290" y="382" width="15" height="28"/><rect x="472" y="276" width="12" height="36"/><rect x="655" y="350" width="16" height="29"/><rect x="828" y="302" width="12" height="31"/><rect x="1028" y="292" width="15" height="31"/><rect x="1258" y="250" width="13" height="34"/><rect x="1452" y="330" width="14" height="28"/><rect x="1692" y="294" width="14" height="32"/>
+</g>
+<!-- window wall -->
+<rect x="410" y="92" width="1170" height="628" rx="4" fill="url(#glass)" stroke="#333945" stroke-width="3"/>
+<path d="M800 92v628M1190 92v628" stroke="#323743" stroke-width="7"/>
+<rect x="410" y="92" width="1170" height="628" fill="url(#rain)"/>
+<g stroke="#d6e2ef" stroke-opacity=".25" stroke-width="4" stroke-linecap="round">
+  <path d="M486 182l-19 71M628 123l-13 53M905 186l-23 84M1070 139l-15 61M1338 164l-24 87M1510 115l-16 58"/>
+</g>
+<!-- interior -->
+<rect y="690" width="1920" height="390" fill="url(#floor)"/>
+<path d="M0 838L1920 744v336H0z" fill="#0d0b0c"/>
+<path d="M0 868L1920 790M0 965l1920-86" stroke="#251b1e" stroke-width="2"/>
+<!-- tattoo desk left-mid -->
+<g transform="translate(505 693)">
+  <rect x="0" y="86" width="480" height="22" rx="5" fill="#252125"/>
+  <rect x="36" y="108" width="24" height="178" fill="#18161a"/><rect x="422" y="108" width="24" height="178" fill="#18161a"/>
+  <rect x="55" y="38" width="178" height="48" rx="4" fill="#151419" stroke="#39323a"/>
+  <path d="M256 85c18-92 65-104 84-42" fill="none" stroke="#8a5b52" stroke-width="7"/>
+  <circle cx="340" cy="38" r="25" fill="#dda26f" opacity=".74"/>
+  <path d="M340 54v42" stroke="#6a4a3d" stroke-width="6"/>
+  <g stroke="#7d3148" stroke-width="3" fill="none" opacity=".8"><path d="M88 58l17-24 20 29 18-39 25 37"/><circle cx="204" cy="58" r="14"/></g>
+</g>
+<!-- tattoo chair -->
+<g transform="translate(1110 718)">
+  <path d="M44 56h228l31 79-21 22H69l-47-38z" fill="#17161a" stroke="#3a3239" stroke-width="4"/>
+  <rect x="94" y="145" width="18" height="134" fill="#17161a"/><rect x="241" y="145" width="18" height="134" fill="#17161a"/>
+  <path d="M90 276h177" stroke="#40343b" stroke-width="8"/>
+</g>
+<!-- wall flash -->
+<g opacity=".82">
+  <rect x="90" y="130" width="225" height="326" fill="#0b0b0e" stroke="#26242a" stroke-width="3"/>
+  <rect x="116" y="160" width="78" height="99" fill="#ddd0bd"/><rect x="210" y="160" width="78" height="99" fill="#c9c2b6"/>
+  <rect x="116" y="277" width="78" height="148" fill="#c8c0b5"/><rect x="210" y="277" width="78" height="148" fill="#d8c9b8"/>
+  <g stroke="#241820" stroke-width="5" fill="none"><path d="M132 210c15-33 42-33 48 4-18 17-30 12-48-4z"/><path d="M226 199c14-24 35-23 47 8l-25 34z"/><path d="M132 326c21-32 36-29 47 14-18 29-34 19-47-14z"/><circle cx="248" cy="340" r="22"/><path d="M226 340h44M248 318v44"/></g>
+</g>
+<!-- sign -->
+<g transform="translate(104 507)"><rect width="205" height="62" rx="5" fill="#13090e" stroke="#7e2945" stroke-width="2"/><text x="102" y="39" text-anchor="middle" fill="#d77a99" font-family="Arial,sans-serif" font-size="24" letter-spacing="8">INK / 23</text></g>
+<!-- practical lights -->
+<circle cx="339" cy="688" r="8" fill="#f0b978"/><path d="M339 688l-120 285h240z" fill="#d99b62" opacity=".07"/>
+<rect width="1920" height="1080" fill="url(#warm)"/><rect width="1920" height="1080" fill="url(#burg)"/>
+<!-- foreground -->
+<path d="M0 1015c255-78 468-54 681 20L681 1080H0z" fill="#050507"/>
+<path d="M1490 1005c170-68 295-76 430-30v105h-430z" fill="#040406"/>
+</svg>
