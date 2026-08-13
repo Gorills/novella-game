@@ -1,22 +1,22 @@
-import { CLUES, EVIDENCE_LINKS, SCENES, SEAL_SEQUENCE } from "../data/story.js";
+import { CLUES, EVIDENCE_LINKS, SCENES } from "../data/story.js";
 
 export function initialState() {
   return {
     sceneId: "menu",
-    stress: 18,
+    stress: 12,
     strain: 0,
-    trustSofia: 46,
+    trustSofia: 48,
     egorInterest: 0,
-    katyaGuard: 74,
+    katyaGuard: 72,
     clues: [],
     hypotheses: [],
     evidenceLinks: [],
     flags: {},
     phoneOpen: false,
-    boardOpen: false,
-    sealOpen: false,
-    sealProgress: 0,
+    deskOpen: false,
     dialogueResponse: null,
+    catResponse: null,
+    echoFocus: null,
     journal: ["Пролог готов к запуску."],
     completed: false
   };
@@ -35,152 +35,210 @@ export function observe(state) {
     flags: { ...state.flags },
     stress: state.stress,
     strain: state.strain,
+    echo_focus: state.echoFocus,
     available_actions: agentActionCatalog(state),
-    overlays: { phone: state.phoneOpen, board: state.boardOpen, seal: state.sealOpen },
+    overlays: { phone: state.phoneOpen, desk: state.deskOpen },
     completed: state.completed
   };
 }
 
+function actionAllowed(state, action) {
+  if (action.requires && !action.requires.every((id) => state.clues.includes(id))) return false;
+  if (action.requiresFlag && !state.flags[action.requiresFlag]) return false;
+  if (action.requiresFlags && !action.requiresFlags.every((flag) => Boolean(state.flags[flag]))) return false;
+  if (action.unlessFlag && state.flags[action.unlessFlag]) return false;
+  return true;
+}
+
 function sceneActions(state) {
   const scene = SCENES[state.sceneId];
-  const list = [];
-  if (scene.actions) list.push(...scene.actions);
-  if (scene.choices && !state.flags.egor_exchanged) list.push(...scene.choices);
-  if (scene.hotspots) {
-    for (const id of scene.hotspots) {
-      if (!state.clues.includes(id)) list.push({ id: `inspect.${id}`, label: `Осмотреть: ${CLUES[id].title}`, kind: "hotspot" });
-    }
-  }
-  return list.filter((action) => {
-    if (action.requires && !action.requires.every((id) => state.clues.includes(id))) return false;
-    if (action.requiresFlag && !state.flags[action.requiresFlag]) return false;
-    if (action.requiresFlags && !action.requiresFlags.every((flag) => Boolean(state.flags[flag]))) return false;
-    return true;
-  });
+  return (scene.actions || []).filter((action) => actionAllowed(state, action));
 }
 
 export function availableActions(state) {
   if (state.phoneOpen) {
     return [
-      { id: "phone.reply.soft", label: "Ответить Софье мягко" },
-      { id: "phone.reply.sarcastic", label: "Ответить Софье саркастично" },
-      { id: "phone.reply.silent", label: "Не отвечать" },
+      { id: "phone.reply.soft", label: "Ответить Софье спокойно" },
+      { id: "phone.reply.sarcastic", label: "Спрятать тревогу за сарказмом" },
+      { id: "phone.reply.partial", label: "Сказать только часть правды" },
       { id: "phone.close", label: "Закрыть телефон" }
     ];
   }
-  if (state.sealOpen) {
-    return [1, 2, 3, 4, 5].map((node) => ({ id: "seal.node", node, label: `Провести линию через узел ${node}` }))
-      .concat({ id: "seal.cancel", label: "Прервать резонанс" });
-  }
-  if (state.boardOpen) {
+
+  if (state.deskOpen) {
     const actions = [];
     for (const link of Object.values(EVIDENCE_LINKS)) {
-      const clueReady = state.clues.includes(link.a) && (!link.b || state.clues.includes(link.b));
-      const flagReady = !link.requiresFlag || state.flags[link.requiresFlag];
-      if (clueReady && flagReady && !state.evidenceLinks.includes(link.id)) {
-        actions.push({ id: `board.link.${link.id}`, label: link.label });
+      const clueReady = state.clues.includes(link.a) && state.clues.includes(link.b);
+      if (clueReady && !state.evidenceLinks.includes(link.id)) {
+        actions.push({ id: `desk.link.${link.id}`, label: link.label });
       }
     }
-    if (state.evidenceLinks.length >= 2 && state.flags.trace_seal_used && !state.flags.hypothesis_confirmed) {
-      actions.push({ id: "board.form_hypothesis", label: "Сформулировать рабочую гипотезу" });
+    if (state.evidenceLinks.length >= 2 && !state.flags.thought_confirmed) {
+      actions.push({ id: "desk.form_thought", label: "Сформулировать, что уже точно известно" });
     }
-    actions.push({ id: "board.close", label: "Закрыть доску" });
+    actions.push({ id: "desk.close", label: "Закрыть рабочий стол" });
     return actions;
   }
+
   return sceneActions(state);
 }
 
-function addJournal(state, text) { state.journal = [text, ...state.journal].slice(0, 10); }
+function addJournal(state, text) {
+  state.journal = [text, ...state.journal].slice(0, 12);
+}
+
 function addClue(state, id) {
   if (!CLUES[id]) throw new Error(`Unknown clue: ${id}`);
   if (!state.clues.includes(id)) {
     state.clues.push(id);
-    addJournal(state, `Улика: ${CLUES[id].title}.`);
+    addJournal(state, `Наблюдение: ${CLUES[id].title}.`);
   }
 }
+
 function addHypothesis(state, text) {
   if (!state.hypotheses.includes(text)) {
     state.hypotheses.push(text);
-    addJournal(state, "Сформулирована новая гипотеза.");
+    addJournal(state, "Катерина сформулировала первый личный вывод.");
   }
 }
+
 function go(state, id) {
   if (!SCENES[id]) throw new Error(`Unknown scene: ${id}`);
   state.sceneId = id;
   state.phoneOpen = false;
-  state.boardOpen = false;
-  state.sealOpen = false;
+  state.deskOpen = false;
   state.dialogueResponse = null;
+  state.catResponse = null;
   addJournal(state, `Сцена: ${SCENES[id].title}.`);
 }
 
-function validAction(state, actionId, payload) {
-  return availableActions(state).some((a) => a.id === actionId && (actionId !== "seal.node" || a.node === Number(payload.node)));
+function validAction(state, actionId) {
+  return availableActions(state).some((action) => action.id === actionId);
 }
 
 export function act(sourceState, actionId, payload = {}) {
   const state = structuredClone(sourceState);
-  if (!validAction(state, actionId, payload)) throw new Error(`Action not available: ${actionId}`);
+  if (!validAction(state, actionId)) throw new Error(`Action not available: ${actionId}`);
 
-  if (actionId === "game.start") go(state, "apartment");
-  else if (actionId === "game.restart") return initialState();
-  else if (actionId === "phone.open") { state.phoneOpen = true; addJournal(state, "Открыт телефон."); }
-  else if (actionId === "phone.close") state.phoneOpen = false;
-  else if (actionId === "phone.reply.soft") { state.trustSofia = Math.min(100, state.trustSofia + 8); state.flags.sofia_replied = "soft"; state.phoneOpen = false; addJournal(state, "Катерина ответила Софье мягче обычного."); }
-  else if (actionId === "phone.reply.sarcastic") { state.trustSofia = Math.max(0, state.trustSofia - 2); state.flags.sofia_replied = "sarcastic"; state.phoneOpen = false; addJournal(state, "Катерина спрятала тревогу за сарказмом."); }
-  else if (actionId === "phone.reply.silent") { state.flags.sofia_replied = "silent"; state.phoneOpen = false; addJournal(state, "Катерина оставила сообщение без ответа."); }
-  else if (actionId === "apartment.inspect_sketch") { state.flags.sketch_inspected = true; addJournal(state, "В старом эскизе обнаружен знакомый ритм линий."); }
-  else if (actionId === "scene.go_street") go(state, "street");
-  else if (actionId === "street.touch_seal") { state.stress = Math.min(100, state.stress + 5); state.flags.seal_felt = true; addJournal(state, "Печать на руке отозвалась жаром."); }
-  else if (actionId === "scene.go_crime") go(state, "crime");
-  else if (actionId.startsWith("inspect.")) addClue(state, actionId.slice("inspect.".length));
-  else if (actionId === "seal.begin") { state.sealOpen = true; state.sealProgress = 0; addJournal(state, "Катерина решила активировать Печать Следа."); }
-  else if (actionId === "seal.cancel") { state.sealOpen = false; state.sealProgress = 0; }
-  else if (actionId === "seal.node") {
-    const node = Number(payload.node);
-    const expected = SEAL_SEQUENCE[state.sealProgress];
-    if (node === expected) {
-      state.sealProgress += 1;
-      if (state.sealProgress === SEAL_SEQUENCE.length) {
-        state.sealOpen = false;
-        state.strain += 16;
-        state.stress = Math.min(100, state.stress + 12);
-        state.flags.trace_seal_used = true;
-        go(state, "echo");
-        addJournal(state, "Печать Следа открыла Эхо места.");
-      }
-    } else {
-      state.strain += 5;
-      state.sealProgress = 0;
-      addJournal(state, "Линия печати сорвалась — резонанс ударил болью.");
-    }
-  }
-  else if (actionId === "hypothesis.seed") { state.flags.tattoo_connection_noted = true; addHypothesis(state, "Знак связан с узором на теле Катерины."); }
-  else if (actionId === "scene.meet_egor") go(state, "egor");
-  else if (actionId === "egor.direct") { state.egorInterest += 9; state.katyaGuard = Math.max(0, state.katyaGuard - 3); state.flags.egor_exchanged = "direct"; state.dialogueResponse = "«Потому что этот знак старше тебя. И потому что он не должен был проснуться»."; addJournal(state, "Катерина потребовала ответ напрямую."); }
-  else if (actionId === "egor.sarcastic") { state.egorInterest += 6; state.flags.egor_exchanged = "sarcastic"; state.dialogueResponse = "«Обычно люди хотя бы представляются до того, как обвиняют меня в слежке»."; addJournal(state, "Катерина встретила предупреждение сарказмом."); }
-  else if (actionId === "egor.cold") { state.egorInterest += 3; state.katyaGuard = Math.min(100, state.katyaGuard + 4); state.flags.egor_exchanged = "cold"; state.dialogueResponse = "Он выдерживает молчание первым. «Хорошо. Не доверяй мне. Просто не игнорируй знак»."; addJournal(state, "Катерина заставила Егора говорить первым."); }
-  else if (actionId === "scene.go_home") go(state, "board");
-  else if (actionId === "board.open") state.boardOpen = true;
-  else if (actionId === "board.close") state.boardOpen = false;
-  else if (actionId.startsWith("board.link.")) {
-    const id = actionId.slice("board.link.".length);
+  if (actionId === "game.start") {
+    go(state, "studio");
+  } else if (actionId === "game.restart") {
+    return initialState();
+  } else if (actionId === "studio.inspect_sketch") {
+    state.flags.sketch_seen = true;
+    addClue(state, "sketch_motif");
+    addJournal(state, "Катерина замечает, что рука снова повторила один и тот же мотив.");
+  } else if (actionId === "studio.close") {
+    go(state, "walk");
+  } else if (actionId === "walk.continue") {
+    go(state, "cordon");
+  } else if (actionId === "cordon.notice_symbol") {
+    addClue(state, "cordon_symbol");
+    state.flags.tattoo_flared = true;
+    state.stress = Math.min(100, state.stress + 18);
+    state.strain += 7;
+    go(state, "echo");
+    addJournal(state, "Резонанс начался сам — Катерина не активировала его сознательно.");
+  } else if (actionId.startsWith("echo.focus.")) {
+    const focus = actionId.slice("echo.focus.".length);
+    const clueId = focus === "voice" ? "echo_voice" : focus === "hand" ? "echo_hand" : "echo_shape";
+    state.echoFocus = focus;
+    state.flags.echo_focused = true;
+    addClue(state, clueId);
+    state.strain += 4;
+    addJournal(state, `В Эхе Катерина удержала одну деталь: ${CLUES[clueId].title.toLowerCase()}.`);
+  } else if (actionId === "echo.break") {
+    state.stress = Math.min(100, state.stress + 6);
+    go(state, "egor");
+  } else if (actionId === "egor.direct") {
+    state.egorInterest += 7;
+    state.katyaGuard = Math.max(0, state.katyaGuard - 2);
+    state.flags.egor_exchanged = "direct";
+    state.dialogueResponse = "«Потому что я видел такое раньше. Этого пока достаточно. И тебе действительно лучше уйти домой».";
+    addJournal(state, "Катерина потребовала объяснений напрямую.");
+  } else if (actionId === "egor.sarcastic") {
+    state.egorInterest += 5;
+    state.flags.egor_exchanged = "sarcastic";
+    state.dialogueResponse = "Он едва заметно усмехается. «Тогда считай это бесплатным плохим советом. Не трогай светящуюся линию».";
+    addJournal(state, "Катерина спрятала испуг за сарказмом.");
+  } else if (actionId === "egor.guarded") {
+    state.egorInterest += 3;
+    state.katyaGuard = Math.min(100, state.katyaGuard + 4);
+    state.flags.egor_exchanged = "guarded";
+    state.dialogueResponse = "«Егор». Он не приближается. «И нет, я не жду, что ты мне поверишь. Просто не оставайся здесь одна».";
+    addJournal(state, "Катерина не подтвердила незнакомцу ничего лишнего.");
+  } else if (actionId === "scene.go_home") {
+    go(state, "home");
+  } else if (actionId === "home.feed_cat") {
+    state.flags.home_settled = true;
+    state.stress = Math.max(0, state.stress - 5);
+    addJournal(state, "Катерина насыпала Кощею корм, поставила чайник и несколько минут позволила вечеру снова быть обычным.");
+  } else if (actionId === "home.check_tattoo") {
+    state.flags.cat_spoke = true;
+    addClue(state, "tattoo_response");
+    state.catResponse = "«Не трогай её.»";
+    state.stress = Math.min(100, state.stress + 10);
+    addJournal(state, "Кощей впервые заговорил человеческим голосом.");
+  } else if (actionId === "koshchey.disbelief") {
+    state.flags.cat_exchanged = "disbelief";
+    state.catResponse = "Кощей медленно моргает зелёными глазами. «Да. Сказал. И, судя по твоему лицу, выбрал не лучший момент».";
+    addJournal(state, "Катерина пытается проверить, не послышалось ли ей.");
+  } else if (actionId === "koshchey.sarcastic") {
+    state.flags.cat_exchanged = "sarcastic";
+    state.catResponse = "«Рад, что чувство юмора пережило резонанс». Хвост нервно дёргается. «А теперь серьёзно: не трогай светящуюся линию».";
+    addJournal(state, "Катерина отвечает говорящему коту сарказмом, потому что иначе придётся испугаться.");
+  } else if (actionId === "koshchey.careful") {
+    state.flags.cat_exchanged = "careful";
+    state.catResponse = "Кощей остаётся на месте. «Сейчас — твой кот. Остальное слишком длинно. Но я не причина того, что случилось во дворе».";
+    addJournal(state, "Катерина держит дистанцию и требует хотя бы минимальной правды.");
+  } else if (actionId === "phone.open") {
+    state.phoneOpen = true;
+    addJournal(state, "Катерина открыла сообщение Софьи.");
+  } else if (actionId === "phone.close") {
+    state.phoneOpen = false;
+  } else if (actionId === "phone.reply.soft") {
+    state.trustSofia = Math.min(100, state.trustSofia + 6);
+    state.flags.sofia_replied = "soft";
+    state.phoneOpen = false;
+    addClue(state, "sofia_photo");
+    addJournal(state, "Катерина отвечает Софье спокойно, не втягивая её в опасность.");
+  } else if (actionId === "phone.reply.sarcastic") {
+    state.trustSofia = Math.max(0, state.trustSofia - 1);
+    state.flags.sofia_replied = "sarcastic";
+    state.phoneOpen = false;
+    addClue(state, "sofia_photo");
+    addJournal(state, "Катерина прячет тревогу за знакомым тоном.");
+  } else if (actionId === "phone.reply.partial") {
+    state.trustSofia = Math.min(100, state.trustSofia + 2);
+    state.flags.sofia_replied = "partial";
+    state.phoneOpen = false;
+    addClue(state, "sofia_photo");
+    addJournal(state, "Катерина признаётся только в том, что видела похожий знак по дороге домой.");
+  } else if (actionId === "desk.open") {
+    state.deskOpen = true;
+    addJournal(state, "Катерина раскладывает свои материалы на рабочем столе.");
+  } else if (actionId === "desk.close") {
+    state.deskOpen = false;
+  } else if (actionId.startsWith("desk.link.")) {
+    const id = actionId.slice("desk.link.".length);
     const link = EVIDENCE_LINKS[id];
     if (!link) throw new Error(`Unknown evidence link: ${id}`);
     state.evidenceLinks.push(id);
-    addJournal(state, `Связь на доске: ${link.result}`);
+    addJournal(state, `Связь на столе: ${link.result}`);
+  } else if (actionId === "desk.form_thought") {
+    addHypothesis(state, "Я рисовала этот знак раньше, хотя не знала, откуда он. И моя татуировка отреагировала на него как на что-то знакомое.");
+    state.flags.thought_confirmed = true;
+    state.deskOpen = false;
+  } else if (actionId === "scene.finish") {
+    go(state, "ending");
+    state.completed = true;
+  } else {
+    throw new Error(`Unhandled action: ${actionId}`);
   }
-  else if (actionId === "board.form_hypothesis") {
-    addHypothesis(state, "Исчезновения используют знак как механизм перехода; тот же язык встроен в татуировки Катерины.");
-    state.flags.hypothesis_confirmed = true;
-    state.boardOpen = false;
-  }
-  else if (actionId === "scene.finish") { go(state, "ending"); state.completed = true; }
-  else throw new Error(`Unhandled action: ${actionId}`);
 
   return state;
 }
 
 export function agentActionCatalog(state) {
-  return availableActions(state).map((a) => ({ ...a }));
+  return availableActions(state).map((action) => ({ ...action }));
 }
