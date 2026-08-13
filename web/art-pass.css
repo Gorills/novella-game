@@ -22,8 +22,8 @@
   z-index: 1;
 }
 
-/* The canonical source contains a few baked dark rectangular artifacts close to
-   the silhouette. Do not repaint Katerina: stage her against a cinematic black
+/* The canonical source contains baked dark rectangular artifacts close to the
+   silhouette. Do not repaint Katerina: stage her against a cinematic black
    vignette so those source pixels disappear into the lighting. */
 .character-stage.right::before,
 .home-character::before,
@@ -49,6 +49,35 @@
   height:100%;
   pointer-events:none;
   background:linear-gradient(90deg,#020305 0%,rgba(2,3,5,.95) 42%,rgba(3,4,6,.54) 74%,transparent 100%);
+}
+
+/* The source also has a damaged lower-body patch. Rather than invent anatomy,
+   frame Katerina as a cinematic half-body sprite and let the lower area fall
+   naturally into foreground shadow. */
+.menu-katya::after,
+.character-stage.right::after,
+.home-character::after,
+.ending-katya::after {
+  content:"";
+  position:absolute;
+  z-index:2;
+  right:0;
+  bottom:0;
+  width:47%;
+  height:48%;
+  pointer-events:none;
+  background:linear-gradient(180deg,transparent 0%,rgba(2,3,5,.44) 35%,rgba(2,3,5,.94) 72%,#020305 100%);
+}
+.katya-side::after {
+  content:"";
+  position:absolute;
+  z-index:2;
+  left:0;
+  bottom:0;
+  width:38%;
+  height:45%;
+  pointer-events:none;
+  background:linear-gradient(180deg,transparent 0%,rgba(2,3,5,.35) 38%,rgba(2,3,5,.92) 78%,#020305 100%);
 }
 
 /* The old geometric glass rectangle made the title screen feel like a mockup. */
@@ -163,6 +192,10 @@
   .character-stage.right::before,
   .home-character::before,
   .ending-katya::before { width:46%; }
+  .menu-katya::after,
+  .character-stage.right::after,
+  .home-character::after,
+  .ending-katya::after { width:51%; height:50%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
