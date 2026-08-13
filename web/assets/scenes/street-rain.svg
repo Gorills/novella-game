@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" role="img" aria-label="Ночной проходной двор под дождём">
+<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#070b12"/><stop offset="1" stop-color="#0d1118"/></linearGradient>
+  <linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#11151b"/><stop offset="1" stop-color="#07090d"/></linearGradient>
+  <linearGradient id="wallL" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1d2027"/><stop offset="1" stop-color="#0a0d12"/></linearGradient>
+  <radialGradient id="blue" cx="0" cy="0" r="1" gradientTransform="translate(1210 560) rotate(90) scale(520 650)"><stop stop-color="#557fc0" stop-opacity=".23"/><stop offset="1" stop-opacity="0"/></radialGradient>
+  <radialGradient id="red" cx="0" cy="0" r="1" gradientTransform="translate(930 760) rotate(90) scale(260 420)"><stop stop-color="#a72f50" stop-opacity=".18"/><stop offset="1" stop-opacity="0"/></radialGradient>
+  <pattern id="rain" width="42" height="72" patternUnits="userSpaceOnUse" patternTransform="rotate(12)"><path d="M8 -8v42M30 16v43" stroke="#b7c7d8" stroke-opacity=".14" stroke-width="2"/></pattern>
+</defs>
+<rect width="1920" height="1080" fill="url(#sky)"/>
+<!-- buildings -->
+<path d="M0 0h520v780H0z" fill="url(#wallL)"/><path d="M1400 0h520v820h-520z" fill="#11141a"/>
+<g fill="#090c12"><rect x="558" y="120" width="180" height="560"/><rect x="760" y="72" width="210" height="608"/><rect x="1000" y="146" width="168" height="534"/><rect x="1198" y="94" width="176" height="586"/></g>
+<g fill="#d0b881" opacity=".28"><rect x="605" y="216" width="18" height="36"/><rect x="680" y="318" width="16" height="31"/><rect x="814" y="170" width="18" height="38"/><rect x="915" y="266" width="16" height="33"/><rect x="1054" y="236" width="17" height="34"/><rect x="1264" y="192" width="18" height="38"/></g>
+<!-- brick details -->
+<g stroke="#30333a" stroke-width="2" opacity=".45"><path d="M0 180h520M0 350h520M0 520h520M1400 210h520M1400 380h520M1400 550h520"/><path d="M120 0v780M330 0v780M1510 0v820M1710 0v820"/></g>
+<!-- windows -->
+<g fill="#121820" stroke="#39414c" stroke-width="3"><rect x="84" y="110" width="132" height="180"/><rect x="278" y="120" width="146" height="196"/><rect x="1468" y="122" width="154" height="210"/><rect x="1670" y="102" width="160" height="232"/></g>
+<g fill="#bb9f76" opacity=".2"><rect x="98" y="128" width="102" height="145"/><rect x="295" y="139" width="112" height="158"/><rect x="1485" y="140" width="120" height="172"/></g>
+<!-- alley opening -->
+<path d="M510 580L721 420h605l88 160v238H510z" fill="#070a0f"/>
+<path d="M730 420v398M1000 420v398M1268 420v398" stroke="#151a22" stroke-width="5"/>
+<!-- road -->
+<path d="M0 720L1920 662v418H0z" fill="url(#road)"/>
+<path d="M0 830L1920 740M0 1004l1920-124" stroke="#252c34" stroke-width="3" opacity=".8"/>
+<!-- puddles/reflections -->
+<g fill="#6a82a1" opacity=".11"><ellipse cx="390" cy="876" rx="260" ry="50"/><ellipse cx="1195" cy="826" rx="330" ry="58"/><ellipse cx="1600" cy="950" rx="240" ry="42"/></g>
+<g stroke="#7596be" stroke-opacity=".19" stroke-width="3"><path d="M231 865h320M1005 817h401M1460 940h304"/></g>
+<!-- street lamps -->
+<g><rect x="596" y="276" width="11" height="466" fill="#20252c"/><path d="M601 292h102" stroke="#20252c" stroke-width="10"/><ellipse cx="703" cy="296" rx="32" ry="18" fill="#e1bd86" opacity=".7"/><path d="M703 307L596 716h216z" fill="#deb577" opacity=".06"/></g>
+<g><rect x="1310" y="220" width="11" height="526" fill="#20252c"/><path d="M1315 238h-100" stroke="#20252c" stroke-width="10"/><ellipse cx="1214" cy="241" rx="32" ry="18" fill="#d8b47f" opacity=".68"/><path d="M1214 253l-92 466h196z" fill="#d9b578" opacity=".05"/></g>
+<!-- cordon clues -->
+<g opacity=".9"><path d="M540 735l760-22" stroke="#c9a63b" stroke-width="18"/><path d="M540 735l760-22" stroke="#2b2410" stroke-width="2" stroke-dasharray="42 30"/><text x="845" y="724" fill="#17140c" font-family="Arial,sans-serif" font-weight="700" font-size="15" letter-spacing="5">НЕ ПЕРЕСЕКАТЬ · POLICE LINE</text></g>
+<!-- subtle ground sigil -->
+<g transform="translate(925 820)" stroke="#9a3555" stroke-width="5" fill="none" opacity=".72"><circle r="48"/><circle r="13"/><path d="M0-48v96M-48 0h96M-34-34l68 68M34-34l-68 68"/></g>
+<!-- police light reflection -->
+<rect width="1920" height="1080" fill="url(#blue)"/><rect width="1920" height="1080" fill="url(#red)"/>
+<rect width="1920" height="1080" fill="url(#rain)"/>
+<!-- foreground depth -->
+<path d="M0 1000c190-38 365-35 550 30v50H0z" fill="#05070a"/><path d="M1470 1015c160-38 295-31 450 9v56h-450z" fill="#05070a"/>
+</svg>
