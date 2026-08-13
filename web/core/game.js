@@ -54,6 +54,7 @@ function sceneActions(state) {
   return list.filter((action) => {
     if (action.requires && !action.requires.every((id) => state.clues.includes(id))) return false;
     if (action.requiresFlag && !state.flags[action.requiresFlag]) return false;
+    if (action.requiresFlags && !action.requiresFlags.every((flag) => Boolean(state.flags[flag]))) return false;
     return true;
   });
 }
