@@ -77,16 +77,44 @@ function drawReasoningLinks() {
   canvas.prepend(svg);
 }
 
+function stageKoshcheyReveal() {
+  const scene = document.querySelector(".scene-home");
+  if (!scene) return;
+  const speaking = scene.querySelector(".home-cat-wrap.speaking");
+  let portrait = scene.querySelector(".koshchey-reveal-shot");
+
+  if (!speaking) {
+    scene.classList.remove("koshchey-reveal");
+    portrait?.remove();
+    return;
+  }
+
+  scene.classList.add("koshchey-reveal");
+  if (!portrait) {
+    portrait = document.createElement("img");
+    portrait.className = "koshchey-reveal-shot";
+    portrait.src = "./assets/koshchey-reveal.svg";
+    portrait.alt = "Кощей — чёрный кот с зелёными глазами";
+    portrait.draggable = false;
+    scene.append(portrait);
+  }
+}
+
 let scheduled = false;
-function scheduleDraw() {
+function reconcilePresentation() {
+  drawReasoningLinks();
+  stageKoshcheyReveal();
+}
+
+function scheduleReconcile() {
   if (scheduled) return;
   scheduled = true;
   requestAnimationFrame(() => {
     scheduled = false;
-    drawReasoningLinks();
+    reconcilePresentation();
   });
 }
 
-new MutationObserver(scheduleDraw).observe(document.querySelector("#app"), { childList: true, subtree: true });
-window.addEventListener("resize", scheduleDraw);
-scheduleDraw();
+new MutationObserver(scheduleReconcile).observe(document.querySelector("#app"), { childList: true, subtree: true });
+window.addEventListener("resize", scheduleReconcile);
+scheduleReconcile();
